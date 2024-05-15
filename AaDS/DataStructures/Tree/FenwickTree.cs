@@ -17,13 +17,10 @@ class FenwickTree
 
     public void UpdateAbsolute(int index, int newValue)
     {
-        if (index < 0 || index >= Count)
-            throw new ArgumentException("Invalid index.");
         Update(index, newValue - RangeQuery(index, index));
     }
-
     
-    void Update(int index, int delta)
+    public void Update(int index, int delta)
     {
         index++;
         while (index <= Count)
@@ -33,7 +30,8 @@ class FenwickTree
         }
     }
 
-    int Query(int index)
+    //Сумма от 0 до index
+    public int Query(int index)
     {
         index++;
         int sum = 0;
@@ -45,10 +43,6 @@ class FenwickTree
         return sum;
     }
 
-    public int RangeQuery(int start, int end)
-    {
-        if (start > end || start < 0 || end >= Count)
-            throw new ArgumentException("Invalid range");
-        return Query(end) - (start > 0 ? Query(start - 1) : 0);
-    }
+    public int RangeQuery(int left, int right) 
+        => Query(right) - Query(left - 1);
 }
