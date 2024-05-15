@@ -1,6 +1,6 @@
 ﻿namespace AaDS.Numerical;
 
-static class MultiplyBigInt
+static class QuickPower
 {
 
     public static double PowerMod(double num, int power, int mod)
@@ -73,31 +73,6 @@ static class MultiplyBigInt
         return n < 0 ? 1 / result : result;
     }
     
-    public static int[] BigPower(int number, int iterations)
-    {
-        int[] result = new int[GetNumberOfDigitsInPower(number, iterations)];
-        result[^1] = 1;
-        int index = -1;
-        for (int i = 0; i < iterations; i++)
-            MultiplyByTwo(result, number, ref index);
-        return result;
-        
-        static void MultiplyByTwo(int[] number, int multiplyNumber, ref int index)
-        {
-            int carry = 0;
-            int i;
-            for (i = number.Length - 1; i > index; i--)
-            {
-                int product = number[i] * multiplyNumber + carry;
-                number[i] = product % 10;
-                carry = product / 10;
-            }
-
-            index = i;
-        }
-
-        static int GetNumberOfDigitsInPower(int baseNumber, int exponent) => (int)Math.Floor(exponent * Math.Log10(baseNumber)) + 1;
-
-    }
-
+    public static int GetNumberOfDigitsInPower(int baseNumber, int exponent) => (int)Math.Floor(exponent * Math.Log10(baseNumber)) + 1;
+    
 }
