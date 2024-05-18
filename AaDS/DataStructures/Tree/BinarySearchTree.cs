@@ -210,19 +210,6 @@ class BinarySearchTree<TValue> where TValue : IComparable<TValue>
     
     public int CountNodes() => CountNodes(Root);
     int CountNodes(BSTNode<TValue>? node) => node == null ? 0 : 1 + CountNodes(node.Left) + CountNodes(node.Right);
-    
-    void Invert() => Invert(Root); //как тестовое
-
-    private void Invert(BSTNode<TValue>? node)
-    {
-        if (node == null)
-            return;
-
-        (node.Left, node.Right) = (node.Right, node.Left);
-
-        Invert(node.Left);
-        Invert(node.Right);
-    }
 
     public int CountNodesAtLevel(int level) => CountNodesAtLevel(Root, level, 0);
 
@@ -410,5 +397,38 @@ class BinarySearchTree<TValue> where TValue : IComparable<TValue>
             Left = CloneNode(node.Left),
             Right = CloneNode(node.Right)
         };
+    }
+    
+    //Другие алгоритмы
+    
+    void Invert() => Invert(Root);
+
+    void Invert(BSTNode<TValue>? node)
+    {
+        if (node == null)
+            return;
+
+        (node.Left, node.Right) = (node.Right, node.Left);
+
+        Invert(node.Left);
+        Invert(node.Right);
+    }
+    
+    bool IsSymmetric(BSTNode<TValue> root)
+    {
+        return Dfs(root.Left, root.Right);
+        
+        bool Dfs(BSTNode<TValue>? root1, BSTNode<TValue>? root2) {
+            if (root1 is null && root2 is null) 
+                return true;
+            
+            if (root1 == null || root2 == null)
+                return false;
+            
+            if (!EqualityComparer<TValue>.Default.Equals(root1.Value, root2.Value))
+                return false;
+
+            return Dfs(root1?.Left, root2?.Right) && Dfs(root1?.Right, root2?.Left);
+        }
     }
 }

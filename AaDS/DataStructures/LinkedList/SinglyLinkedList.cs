@@ -273,5 +273,71 @@ class SinglyLinkedList<T> : IEnumerable<T>
     }
     
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    
+    //Методы для других целей
+    
+    Node<T> MergeTwoSortedLists(Node<T> list1, Node<T> list2) {
+        Node<T> dummyHead = new(); 
+        var current = dummyHead; 
+
+        while (list1 != null && list2 != null) {
+            if (Comparer<T>.Default.Compare(list1.Data, list2.Data) < 0) {
+                current.Next = list1;
+                list1 = list1.Next!;
+            } else {
+                current.Next = list2;
+                list2 = list2.Next!;
+            }
+            current = current.Next;
+        }
+
+        current.Next = list1 != null ? list1 : list2;
+
+        return dummyHead.Next!; 
+    }
+    
+    bool HasCycle(Node<T> head) {
+        var slow = head;
+        var fast = head;
+        while (slow != null && fast != null) {
+            slow = slow.Next;
+            
+            fast = fast.Next;
+            if (fast != null) {
+                fast = fast.Next;
+            } else {
+                return false;
+            }
+
+            if (slow == fast) return true;
+        }
+        return false;
+    }
+    
+    Node<T>? RotateRight(Node<T> head, int k) {
+        if (head?.Next == null || k == 0) {
+            return head;
+        }
+
+        var tail = head;
+        int count = 1;
+        while (tail.Next != null) {
+            tail = tail.Next;
+            count++;
+        }
+
+        k %= count;
+        if (k is 0) return head;
+        tail.Next = head;
+
+        for (int i = 0; i < count - k; i++) {
+            head = head.Next!;
+            tail = tail!.Next;
+        }    
+
+        tail!.Next = null;
+
+        return head;
+    }
 }
 
