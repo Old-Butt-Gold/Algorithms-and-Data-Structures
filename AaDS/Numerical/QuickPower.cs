@@ -14,6 +14,11 @@ static class QuickPower
         if (num == 0)
             return 0;
 
+        if (power == int.MinValue) { //overflow handling
+            num *= num;
+            power /= 2;
+        }
+        
         double result = 1;
         double current = num;
         int exponent = Math.Abs(power);
@@ -56,6 +61,11 @@ static class QuickPower
     {
         if (n == 0)
             return 1;
+        
+        if (n == int.MinValue) { //overflow handling
+            x *= x;
+            n /= 2;
+        }
 
         double result = 1;
         double current = x;
