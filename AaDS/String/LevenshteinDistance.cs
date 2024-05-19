@@ -5,6 +5,22 @@ class LevenshteinDistance
     static int IsCharEqual(char a, char b) => a == b ? 0 : 1;
 
     static int Min(int a, int b, int c) => Math.Min(Math.Min(a, b), c);
+
+    int GetDistanceRecursive(string one, string two)
+    {
+        return Distance(one.Length, two.Length);
+
+        int Distance(int i, int j)
+        {
+            if (i is 0) return j;
+            if (j is 0) return i;
+
+            int insert = Distance(i, j - 1) + 1;
+            int delete = Distance(i - 1, j) + 1;
+            int sub = Distance(i - 1, j - 1) + IsCharEqual(one[i - 1], two[j - 1]);
+            return Min(insert, sub, delete);
+        }
+    }
     
     static int GetLevenshteinDistance(string one, string two)
     {

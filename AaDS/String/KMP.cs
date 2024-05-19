@@ -7,48 +7,45 @@ static class KMP
     ///     of the pattern in the input string.
     ///     Returns -1 if no match.
     /// </summary>
-    static int Search(string input, string pattern)
+    public static int KMPSearch(string haystack, string needle)
     {
-        var isMatchingInProgress = false;
-        var matchIndex = new int[pattern.Length];
-        var patternIndex = 0;
+        if (string.IsNullOrEmpty(needle)) return 0; // если needle пуст, вернуть 0
+        int[] lps = new int[needle.Length];
 
-        for (var i = 1; i < pattern.Length; i++)
+        // Препроцессинг
+        int pre = 0;
+        for (int i = 1; i < needle.Length; i++)
         {
-            if (pattern[i] != pattern[patternIndex])
+            while (pre > 0 && needle[i] != needle[pre])
             {
-                if (isMatchingInProgress) i--;
-                isMatchingInProgress = false;
-                patternIndex = matchIndex[patternIndex == 0 ? 0 : patternIndex - 1];
+                pre = lps[pre - 1];
             }
-            else
+            if (needle[pre] == needle[i])
             {
-                isMatchingInProgress = true;
-                matchIndex[i] = patternIndex + 1;
-                patternIndex++;
+                pre++;
+                lps[i] = pre;
             }
         }
 
-        isMatchingInProgress = false;
-        patternIndex = 0;
-
-        for (var i = 0; i < input.Length; i++)
+        // Основной алгоритм
+        int n = 0; // индекс для needle
+        for (int h = 0; h < haystack.Length; h++)
         {
-            if (input[i] == pattern[patternIndex])
+            while (n > 0 && needle[n] != haystack[h])
             {
-                isMatchingInProgress = true;
-                patternIndex++;
-
-                if (patternIndex == pattern.Length) return i - pattern.Length + 1;
+                n = lps[n - 1];
             }
-            else
+            if (needle[n] == haystack[h])
             {
-                if (isMatchingInProgress) i--;
-                isMatchingInProgress = false;
-                if (patternIndex != 0) patternIndex = matchIndex[patternIndex - 1];
+                n++;
+            }
+            if (n == needle.Length)
+            {
+                return h - n + 1;
             }
         }
 
         return -1;
     }
+
 }

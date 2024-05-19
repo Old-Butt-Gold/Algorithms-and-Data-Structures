@@ -431,4 +431,20 @@ class BinarySearchTree<TValue> where TValue : IComparable<TValue>
             return Dfs(root1?.Left, root2?.Right) && Dfs(root1?.Right, root2?.Left);
         }
     }
+    
+    int MaxDepth(BSTNode<TValue>? root) {
+        if (root is null) return 0;
+
+        int left = MaxDepth(root.Left);
+        int right = MaxDepth(root.Right);
+        return Math.Max(left, right) + 1;
+    }
+    
+    bool IsSameTree(BSTNode<TValue>? p, BSTNode<TValue>? q) {
+        if (p is null && q is null) return true;
+        if (p is null || q is null) return false;
+        
+        return EqualityComparer<TValue>.Default.Equals(p.Value, q.Value) 
+               && IsSameTree(p.Left, q.Left) && IsSameTree(p.Right, q.Right);
+    }
 }
