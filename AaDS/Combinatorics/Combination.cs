@@ -1,21 +1,21 @@
 ﻿namespace AaDS.Combinatorics;
 
 /// <summary>
-/// Combination generator (nCr).
+/// Combination generator (nCk).
 /// </summary>
 static class Combination
 {
-    public static List<List<T>> GenerateCombinations<T>(List<T> elements, int r, bool repeat = false)
+    //
+    public static List<List<T>> Generate<T>(List<T> elements, int length, bool allowRepetition = false)
     {
         var result = new List<List<T>>();
-        Recurse(elements, r, repeat, 0, new(), new(), result);
+        Recurse(elements, length, allowRepetition, 0, [], [], result);
         return result;
     }
 
-    static void Recurse<T>(List<T> elements, int r, bool withRepetition,
-        int currentIndex, List<T> currentCombination, HashSet<int> usedIndices, List<List<T>> result)
+    static void Recurse<T>(List<T> elements, int length, bool allowRepetition, int currentIndex, List<T> currentCombination, HashSet<int> usedIndices, List<List<T>> result)
     {
-        if (currentCombination.Count == r)
+        if (currentCombination.Count == length)
         {
             result.Add(new(currentCombination));
             return;
@@ -23,12 +23,12 @@ static class Combination
 
         for (var i = currentIndex; i < elements.Count; i++)
         {
-            if (usedIndices.Contains(i) && !withRepetition) continue;
+            if (usedIndices.Contains(i) && !allowRepetition) continue;
 
             currentCombination.Add(elements[i]);
             usedIndices.Add(i);
 
-            Recurse(elements, r, withRepetition, i, currentCombination, usedIndices, result);
+            Recurse(elements, length, allowRepetition, i, currentCombination, usedIndices, result);
 
             currentCombination.RemoveAt(currentCombination.Count - 1);
             usedIndices.Remove(i);

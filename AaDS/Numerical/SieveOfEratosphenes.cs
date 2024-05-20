@@ -1,6 +1,6 @@
 ﻿namespace AaDS.Numerical;
 
-public static class SieveOfEratosthene
+public static class SieveOfEratosthenes
 {
     public static List<int> GeneratePrimes(int n)
     {

@@ -10,8 +10,8 @@ class DaryHeap<T> : IEnumerable<T> where T : IComparable
     public int Count { get; private set; }
     public bool IsEmpty => Count == 0;
 
-    List<T> heapArray = new List<T>();
-    readonly int children;
+    List<T> _heapArray = new List<T>();
+    readonly int _children;
 
     public DaryHeap(int children, SortDirection sortDirection = SortDirection.Ascending)
     {
@@ -20,7 +20,7 @@ class DaryHeap<T> : IEnumerable<T> where T : IComparable
 
         if (children <= 2) throw new Exception("Number of nodes d must be greater than 2.");
 
-        this.children = children;
+        this._children = children;
     }
 
     public DaryHeap(int children, IEnumerable<T> initial, SortDirection sortDirection = SortDirection.Ascending) 
@@ -28,18 +28,18 @@ class DaryHeap<T> : IEnumerable<T> where T : IComparable
     {
         if (initial is null)
             throw new ArgumentNullException();
-        heapArray.AddRange(initial);
-        Count = heapArray.Count;
+        _heapArray.AddRange(initial);
+        Count = _heapArray.Count;
         BuildHeap();
     }
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-    public IEnumerator<T> GetEnumerator() => heapArray.GetEnumerator();
+    public IEnumerator<T> GetEnumerator() => _heapArray.GetEnumerator();
 
     void BuildHeap()
     {
-        var lastNonLeafIndex = (heapArray.Count - 1) / children;
+        var lastNonLeafIndex = (_heapArray.Count - 1) / _children;
         for (int i = lastNonLeafIndex; i > -1; i--)
         {
             HeapifyDown(i);
@@ -48,7 +48,7 @@ class DaryHeap<T> : IEnumerable<T> where T : IComparable
     
     public void Insert(T newItem)
     {
-        heapArray.Add(newItem);
+        _heapArray.Add(newItem);
         Count++;
         HeapifyUp(Count - 1);
     }
@@ -58,11 +58,11 @@ class DaryHeap<T> : IEnumerable<T> where T : IComparable
         if (index < 1)
             return;
 
-        int parentIndex = (index - 1) / children;
+        int parentIndex = (index - 1) / _children;
 
-        if (_comparer.Compare(heapArray[index], heapArray[parentIndex]) < 0)
+        if (_comparer.Compare(_heapArray[index], _heapArray[parentIndex]) < 0)
         {
-            (heapArray[index], heapArray[parentIndex]) = (heapArray[parentIndex], heapArray[index]);
+            (_heapArray[index], _heapArray[parentIndex]) = (_heapArray[parentIndex], _heapArray[index]);
             HeapifyUp(parentIndex);
         }
     }
@@ -72,10 +72,10 @@ class DaryHeap<T> : IEnumerable<T> where T : IComparable
         if (Count == 0)
             throw new Exception("Empty heap");
 
-        T minMax = heapArray[0];
+        T minMax = _heapArray[0];
 
-        heapArray[0] = heapArray[Count - 1];
-        heapArray.RemoveAt(Count - 1);
+        _heapArray[0] = _heapArray[Count - 1];
+        _heapArray.RemoveAt(Count - 1);
         Count--;
 
         HeapifyDown(0);
@@ -87,9 +87,9 @@ class DaryHeap<T> : IEnumerable<T> where T : IComparable
     {
         int minMaxChildIndex = FindMinMaxChildIndex(index);
 
-        if (minMaxChildIndex != -1 && _comparer.Compare(heapArray[index], heapArray[minMaxChildIndex]) > 0)
+        if (minMaxChildIndex != -1 && _comparer.Compare(_heapArray[index], _heapArray[minMaxChildIndex]) > 0)
         {
-            (heapArray[index], heapArray[minMaxChildIndex]) = (heapArray[minMaxChildIndex], heapArray[index]);
+            (_heapArray[index], _heapArray[minMaxChildIndex]) = (_heapArray[minMaxChildIndex], _heapArray[index]);
             HeapifyDown(minMaxChildIndex);
         }
     }
@@ -97,20 +97,20 @@ class DaryHeap<T> : IEnumerable<T> where T : IComparable
     int FindMinMaxChildIndex(int currentParent)
     {
         
-        var currentMinMax = currentParent * children + 1;
+        var currentMinMax = currentParent * _children + 1;
 
         if (currentMinMax >= Count)
             return -1;
 
-        for (var i = 2; i <= children; i++)
+        for (var i = 2; i <= _children; i++)
         {
-            var newIndex = currentParent * children + i;
+            var newIndex = currentParent * _children + i;
             if (newIndex >= Count)
                 break;
 
-            var nextSibling = heapArray[newIndex];
+            var nextSibling = _heapArray[newIndex];
 
-            if (_comparer.Compare(heapArray[currentMinMax], nextSibling) > 0) 
+            if (_comparer.Compare(_heapArray[currentMinMax], nextSibling) > 0) 
                 currentMinMax = newIndex;
         }
 
@@ -122,7 +122,7 @@ class DaryHeap<T> : IEnumerable<T> where T : IComparable
         if (Count == 0) 
             throw new Exception("Empty heap");
 
-        return heapArray[0];
+        return _heapArray[0];
     }
 
 }
