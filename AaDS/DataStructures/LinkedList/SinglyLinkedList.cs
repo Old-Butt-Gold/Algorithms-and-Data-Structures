@@ -339,5 +339,57 @@ class SinglyLinkedList<T> : IEnumerable<T>
 
         return head;
     }
+    
+    Node<T>? RemoveNthFromEnd(Node<T>? head, int n) {
+        var slow = head;
+        var fast = head;
+
+        for (int i = 0; i < n; i++) {
+            fast = fast?.Next;
+        }
+
+        if (fast == null) {
+            return head?.Next;
+        }
+
+        while (fast.Next != null) {
+            slow = slow?.Next;
+            fast = fast.Next;
+        }
+
+        slow!.Next = slow.Next?.Next;
+
+        return head;
+    }
+    
+    Node<T> DeleteDuplicates(Node<T> head) //only in sorted
+    {
+        if (head is null) return head;
+        var sentinel = new Node<T>
+        {
+            Next = head
+        };
+        var prev = sentinel;
+        while (head != null)
+        {
+            if (head.Next != null && EqualityComparer<T>.Default.Equals(head.Data, head.Next.Data))
+            {
+                while (head.Next != null && EqualityComparer<T>.Default.Equals(head.Data, head.Next.Data))
+                {
+                    head = head.Next;
+                }
+
+                prev!.Next = head.Next;
+            }
+            else
+            {
+                prev = prev!.Next;
+            }
+
+            head = head.Next!;
+        }
+
+        return sentinel.Next;
+    }
 }
 

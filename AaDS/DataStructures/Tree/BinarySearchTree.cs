@@ -207,9 +207,6 @@ class BinarySearchTree<TValue> where TValue : IComparable<TValue>
     
         return CountLeaves(node.Left) + CountLeaves(node.Right);
     }
-    
-    public int CountNodes() => CountNodes(Root);
-    int CountNodes(BSTNode<TValue>? node) => node == null ? 0 : 1 + CountNodes(node.Left) + CountNodes(node.Right);
 
     public int CountNodesAtLevel(int level) => CountNodesAtLevel(Root, level, 0);
 
@@ -447,4 +444,24 @@ class BinarySearchTree<TValue> where TValue : IComparable<TValue>
         return EqualityComparer<TValue>.Default.Equals(p.Value, q.Value) 
                && IsSameTree(p.Left, q.Left) && IsSameTree(p.Right, q.Right);
     }
+
+    /// <summary>
+    /// Given the root of a binary tree and an integer targetSum, return true if the tree has a root-to-leaf path such that adding up all the values along the path equals targetSum.
+    /// A leaf is a node with no children.
+    /// </summary>
+    /// <param name="root"></param>
+    /// <param name="targetSum"></param>
+    /// <returns></returns>
+    public bool HasPathSum(BSTNode<int>? root, int targetSum)
+    {
+        if (root is null) return false;
+
+        int currentSum = targetSum - root.Value;
+        if (currentSum == 0 && root.Left == null && root.Right == null) return true;
+
+        return HasPathSum(root.Left, currentSum) || HasPathSum(root.Right, currentSum);
+    }
+    
+    public int CountNodes() => CountNodes(Root); //Count overall amount of nodes
+    int CountNodes(BSTNode<TValue>? node) => node == null ? 0 : 1 + CountNodes(node.Left) + CountNodes(node.Right);
 }

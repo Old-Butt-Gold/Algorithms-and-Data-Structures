@@ -31,8 +31,8 @@ public class SeparateChainingDictionary<TKey, TValue> : IDictionary<TKey, TValue
     public SeparateChainingDictionary(params IEnumerable<KeyValuePair<TKey, TValue>>[] collections) : this(DefaultSize)
     {
         foreach (var collection in collections)
-        foreach (KeyValuePair<TKey, TValue> item in collection)
-            Add(item);
+            foreach (var item in collection)
+                Add(item);
     }
 
     int GetHash(TKey key) => (key!.GetHashCode() & 0x7FFFFFFF) % _items!.Length;
@@ -83,7 +83,7 @@ public class SeparateChainingDictionary<TKey, TValue> : IDictionary<TKey, TValue
     {
         get
         {
-            if (TryGetValue(key, out TValue value))
+            if (TryGetValue(key, out var value))
                 return value;
             throw new KeyNotFoundException();
         }
@@ -119,24 +119,28 @@ public class SeparateChainingDictionary<TKey, TValue> : IDictionary<TKey, TValue
             return values;
         }
     }
-
-
+    
     public void Add(TKey key, TValue value) => Add(key, value, true);
     
     public void Add(KeyValuePair<TKey, TValue> pair) => Add(pair.Key, pair.Value, true);
-    
-    public void Add(TKey key, TValue value, bool isAdd) {
+
+    public void Add(TKey key, TValue value, bool isAdd)
+    {
         int index = GetHash(key);
         Node<TKey, TValue>? current = _items[index];
-        while (current != null) {
-            if (EqualityComparer<TKey>.Default.Equals(current.Key, key)) {
+        while (current != null)
+        {
+            if (EqualityComparer<TKey>.Default.Equals(current.Key, key))
+            {
                 if (isAdd)
                     throw new ArgumentException();
                 current.Data = value;
                 return;
             }
+
             current = current.Next;
         }
+
         Node<TKey, TValue> newNode = new(key, value);
         newNode.Next = _items[index];
         _items[index] = newNode;
@@ -144,8 +148,9 @@ public class SeparateChainingDictionary<TKey, TValue> : IDictionary<TKey, TValue
         Count++;
         Grow();
     }
- 
-    void Grow() {
+
+    void Grow()
+    {
         if (Count >= 0.75 * _items.Length)
         {
             Node<TKey, TValue>?[] newItems = new Node<TKey, TValue>[_items.Length * 2];
@@ -161,11 +166,13 @@ public class SeparateChainingDictionary<TKey, TValue> : IDictionary<TKey, TValue
                     current = next;
                 }
             }
+
             _items = newItems;
         }
     }
-    
-    void Shrink() {
+
+    void Shrink()
+    {
         if (Count <= 0.3 * _items.Length && _items.Length > DefaultSize)
         {
             Node<TKey, TValue>?[] newItems = new Node<TKey, TValue>[_items.Length / 2];
@@ -174,7 +181,7 @@ public class SeparateChainingDictionary<TKey, TValue> : IDictionary<TKey, TValue
                 Node<TKey, TValue>? current = _items[i];
                 while (current != null)
                 {
-                    Node<TKey, TValue>? next = current.Next;
+                    var next = current.Next;
                     int newIndex = current.Key!.GetHashCode() & 0x7FFFFFFF % newItems.Length;
                     current.Next = newItems[newIndex];
                     newItems[newIndex] = current;
@@ -208,7 +215,7 @@ public class SeparateChainingDictionary<TKey, TValue> : IDictionary<TKey, TValue
     public bool Contains(KeyValuePair<TKey, TValue> item)
     {
         int index = GetHash(item.Key);
-        Node<TKey, TValue>? current = _items[index];
+        var current = _items[index];
         while (current != null)
         {
             if (EqualityComparer<TKey>.Default.Equals(current.Key, item.Key) && EqualityComparer<TValue>.Default.Equals(current.Data, item.Value))
@@ -221,7 +228,7 @@ public class SeparateChainingDictionary<TKey, TValue> : IDictionary<TKey, TValue
 
     public bool ContainsKey(TKey key)
     {
-        Node<TKey, TValue>? current = _items[GetHash(key)];
+        var current = _items[GetHash(key)];
         while (current != null)
         {
             if (EqualityComparer<TKey>.Default.Equals(current.Key, key))

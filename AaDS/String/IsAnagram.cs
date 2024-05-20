@@ -32,4 +32,31 @@ public static class IsAnagram
 
         return true;
     }
+    
+    public static IList<IList<string>> GroupAnagrams(string[] strs) {
+        List<IList<string>> groupedAnagrams = [];
+        Dictionary<string, List<string>> dictionary = new();
+        
+        foreach (var str in strs)
+        {
+            var chars = str.ToCharArray();
+            Array.Sort(chars); //лексикографический порядок букв
+
+            var newStr = string.Join("", chars);
+            if (dictionary.TryGetValue(newStr, out var list))
+            {
+                list.Add(str);
+            }
+            else
+            {
+                dictionary.Add(newStr, []);
+                dictionary[newStr].Add(str);
+            }
+        }
+
+        groupedAnagrams.AddRange(dictionary.Values);
+
+        return groupedAnagrams;
+    }
+
 }

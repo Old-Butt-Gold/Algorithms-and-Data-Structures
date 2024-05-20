@@ -13,11 +13,13 @@ static class BinarySearch<T> where T : IComparable<T>
         if (left <= right)
         {
             int middle = (left + right) / 2;
-            if (Comparer<T>.Default.Compare(element, input[middle]) < 0)
+            
+            int comparison = element.CompareTo(input[middle]);
+            if (comparison < 0)
                 return Search(input, left, middle - 1, element);
-            if (Comparer<T>.Default.Compare(element, input[middle]) > 0)
+            if (comparison > 0)
                 return Search(input, middle + 1, right, element);
-            if (Comparer<T>.Default.Compare(element, input[middle]) == 0)
+            if (comparison == 0)
                 return middle;
         }
 
