@@ -1,8 +1,9 @@
-﻿using AaDS.DataStructures.Shared;
+﻿using System.Collections;
+using AaDS.DataStructures.Shared;
 
 namespace AaDS.DataStructures.Tree;
 
-class BinarySearchTree<TValue> where TValue : IComparable<TValue>
+class BinarySearchTree<TValue> : IEnumerable<TValue> where TValue : IComparable<TValue>
 {
     public int Count { get; set; }
     public bool IsEmpty => Count == 0;
@@ -11,7 +12,7 @@ class BinarySearchTree<TValue> where TValue : IComparable<TValue>
 
     public BinarySearchTree(TValue value) => (Root, Count) = (new(value), 1);
 
-    public BinarySearchTree(IEnumerable<TValue>? collection)
+    public BinarySearchTree(System.Collections.Generic.IEnumerable<TValue>? collection)
     {
         if (collection != null)
         {
@@ -108,36 +109,45 @@ class BinarySearchTree<TValue> where TValue : IComparable<TValue>
         }
 
         return root;
+        
+        BSTNode<TValue>? FindMinNode(BSTNode<TValue>? node) => node?.Left == null ? node : FindMinNode(node.Left);
     }
     
-    BSTNode<TValue>? FindMinNode(BSTNode<TValue>? node) => node?.Left == null ? node : FindMinNode(node.Left);
-    
-    public TValue FindMinValue() => FindMinValueRecursive(Root);
-
-    TValue FindMinValueRecursive(BSTNode<TValue>? node) => node.Left == null ? node.Value : FindMinValueRecursive(node.Left);
-
-    public TValue FindMaxValue() => FindMaxValueRecursive(Root);
-
-    TValue FindMaxValueRecursive(BSTNode<TValue>? node) => node.Right == null ? node.Value : FindMaxValueRecursive(node.Right);
-
-    public int CountIncompleteNodes() => CountIncompleteNodes(Root);
-
-    int CountIncompleteNodes(BSTNode<TValue> bstNode)
+    public TValue FindMinValue()
     {
-        if (Root is null) 
-            return 0;
-
-        int count = 0;
-
-        if ((Root.Left is null && Root.Right != null) || (Root.Right is null && Root.Left != null))
+        return FindMinValueRecursive(Root);
+        
+        TValue FindMinValueRecursive(BSTNode<TValue>? node) => node.Left == null ? node.Value : FindMinValueRecursive(node.Left);
+    }
+    
+    public TValue FindMaxValue()
+    {
+        return FindMaxValueRecursive(Root);
+        
+        TValue FindMaxValueRecursive(BSTNode<TValue>? node) => node.Right == null ? node.Value : FindMaxValueRecursive(node.Right);
+    }
+    
+    public int CountIncompleteNodes()
+    {
+        return Count(Root);
+        
+        int Count(BSTNode<TValue> bstNode)
         {
-            count++;
+            if (Root is null) 
+                return 0;
+
+            int count = 0;
+
+            if ((Root.Left is null && Root.Right != null) || (Root.Right is null && Root.Left != null))
+            {
+                count++;
+            }
+
+            count += Count(Root.Left);
+            count += Count(Root.Right);
+
+            return count;
         }
-
-        count += CountIncompleteNodes();
-        count += CountIncompleteNodes();
-
-        return count;
     }
     
     public bool RemoveMin()
@@ -148,17 +158,17 @@ class BinarySearchTree<TValue> where TValue : IComparable<TValue>
         Root = RemoveMinNode(Root);
         Count--;
         return true;
+        
+        BSTNode<TValue>? RemoveMinNode(BSTNode<TValue>? node)
+        {
+            if (node?.Left == null)
+                return node?.Right;
+
+            node.Left = RemoveMinNode(node.Left);
+            return node;
+        }
     }
-
-    BSTNode<TValue>? RemoveMinNode(BSTNode<TValue>? node)
-    {
-        if (node?.Left == null)
-            return node?.Right;
-
-        node.Left = RemoveMinNode(node.Left);
-        return node;
-    }
-
+    
     public bool RemoveMax()
     {
         if (Root == null)
@@ -167,172 +177,169 @@ class BinarySearchTree<TValue> where TValue : IComparable<TValue>
         Root = RemoveMaxNode(Root);
         Count--;
         return true;
-    }
+        
+        BSTNode<TValue>? RemoveMaxNode(BSTNode<TValue>? node)
+        {
+            if (node?.Right == null)
+                return node?.Left;
 
-    BSTNode<TValue>? RemoveMaxNode(BSTNode<TValue>? node)
-    {
-        if (node?.Right == null)
-            return node?.Left;
-
-        node.Right = RemoveMaxNode(node.Right);
-        return node;
-    }
-    
-    public int GetHeight() => GetHeight(Root);
-
-    int GetHeight(BSTNode<TValue>? node) => 
-        node == null ? 0 : Math.Max(GetHeight(node.Left), GetHeight(node.Right)) + 1;
-
-    public bool IsBalanced() => IsBalanced(Root);
-
-    bool IsBalanced(BSTNode<TValue>? node)
-    {
-        if (node == null)
-            return true;
-
-        int leftHeight = GetHeight(node.Left);
-        int rightHeight = GetHeight(node.Right);
-
-        return Math.Abs(leftHeight - rightHeight) <= 1 && IsBalanced(node.Left) && IsBalanced(node.Right);
+            node.Right = RemoveMaxNode(node.Right);
+            return node;
+        }
     }
     
-    public int CountLeaves() => CountLeaves(Root);
-
-    int CountLeaves(BSTNode<TValue>? node)
+    public int GetHeight()
     {
-        if (node == null) return 0;
-    
-        if (node.Left == null && node.Right == null)
-            return 1;
-    
-        return CountLeaves(node.Left) + CountLeaves(node.Right);
-    }
-
-    public int CountNodesAtLevel(int level) => CountNodesAtLevel(Root, level, 0);
-
-    int CountNodesAtLevel(BSTNode<TValue>? node, int targetLevel, int currentLevel)
-    {
-        if (node == null)
-            return 0;
-
-        if (currentLevel == targetLevel)
-            return 1;
-
-        return CountNodesAtLevel(node.Left, targetLevel, currentLevel + 1) +
-               CountNodesAtLevel(node.Right, targetLevel, currentLevel + 1);
+        return Height(Root);
+        
+        int Height(BSTNode<TValue>? node) => 
+            node == null ? 0 : Math.Max(Height(node.Left), Height(node.Right)) + 1;
     }
     
-    public BSTNode<TValue>? FindPredecessor(TValue value) => FindPredecessor(Root, value);
-    BSTNode<TValue>? FindPredecessor(BSTNode<TValue>? node, TValue value)
+    public bool IsBalanced()
     {
-        if (node == null) return null;
+        return CheckHeight(Root) != -1;
+        
+        int CheckHeight(BSTNode<TValue>? node)
+        {
+            if (node == null)
+                return 0;
 
-        if (node.Value.CompareTo(value) >= 0)
-            return FindPredecessor(node.Left, value);
+            int leftHeight = CheckHeight(node.Left);
+            if (leftHeight == -1) return -1;
 
-        return FindPredecessor(node.Right, value) ?? node;
+            int rightHeight = CheckHeight(node.Right);
+            if (rightHeight == -1) return -1;
+
+            if (Math.Abs(leftHeight - rightHeight) > 1)
+                return -1;
+
+            return Math.Max(leftHeight, rightHeight) + 1;
+        }
     }
-
-    public BSTNode<TValue>? FindSuccessor(TValue value) => FindSuccessor(Root, value);
-    BSTNode<TValue>? FindSuccessor(BSTNode<TValue>? node, TValue value)
+    
+    public int CountLeaves()
     {
-        if (node == null) return null;
-
-        if (node.Value.CompareTo(value) <= 0)
-            return FindSuccessor(node.Right, value);
-
-        return FindSuccessor(node.Left, value) ?? node;
+        return Count(Root);
+        
+        int Count(BSTNode<TValue>? node)
+        {
+            if (node == null) return 0;
+    
+            if (node.Left == null && node.Right == null)
+                return 1;
+    
+            return Count(node.Left) + Count(node.Right);
+        }
     }
+    
+    public int CountNodesAtLevel(int level)
+    {
+        return Count(Root, level, 0);
+        
+        int Count(BSTNode<TValue>? node, int targetLevel, int currentLevel)
+        {
+            if (node == null)
+                return 0;
 
+            if (currentLevel == targetLevel)
+                return 1;
+
+            return Count(node.Left, targetLevel, currentLevel + 1) +
+                   Count(node.Right, targetLevel, currentLevel + 1);
+        }
+    }
+    
     public List<TValue> PreOrderTraversal()
     {
         List<TValue> list = new();
-        PreOrderTraversal(Root, list.Add);
+        Traversal(Root, list.Add);
         return list;
-    }
-
-    void PreOrderTraversal(BSTNode<TValue>? node, Action<TValue> action)
-    {
-        if (node == null) return;
+        
+        void Traversal(BSTNode<TValue>? node, Action<TValue> action)
+        {
+            if (node == null) return;
     
-        action(node.Value);
-        PreOrderTraversal(node.Left, action);
-        PreOrderTraversal(node.Right, action);
+            action(node.Value);
+            Traversal(node.Left, action);
+            Traversal(node.Right, action);
+        }
     }
-
+    
     public List<TValue> InOrderTraversal()
     {
         List<TValue> list = new();
-        InOrderTraversal(Root, list.Add);
+        Traversal(Root, list.Add);
         return list;
-    }
-
-    void InOrderTraversal(BSTNode<TValue>? node, Action<TValue> action)
-    {
-        if (node == null) return;
-        InOrderTraversal(node.Left, action);
-        action(node.Value);
-        InOrderTraversal(node.Right, action);
+        
+        void Traversal(BSTNode<TValue>? node, Action<TValue> action)
+        {
+            if (node == null) return;
+            Traversal(node.Left, action);
+            action(node.Value);
+            Traversal(node.Right, action);
+        }
     }
 
     public List<TValue> ReverseInOrderTraversal()
     {
         List<TValue> list = new();
-        ReverseInOrderTraversal(Root, list.Add);
+        Traversal(Root, list.Add);
         return list;
-    }
-
-    void ReverseInOrderTraversal(BSTNode<TValue>? node, Action<TValue> action)
-    {
-        if (node == null) return;
         
-        ReverseInOrderTraversal(node.Right, action);
-        action(node.Value);
-        ReverseInOrderTraversal(node.Left, action);
+        void Traversal(BSTNode<TValue>? node, Action<TValue> action)
+        {
+            if (node == null) return;
+        
+            Traversal(node.Right, action);
+            action(node.Value);
+            Traversal(node.Left, action);
+        }
     }
-
+    
     public List<TValue> PostOrderTraversal()
     {
         List<TValue> list = new();
-        PostOrderTraversal(Root, list.Add);
+        Traversal(Root, list.Add);
         return list;
-    }
-
-    void PostOrderTraversal(BSTNode<TValue>? node, Action<TValue> action)
-    {
-        if (node == null) return;
-    
-        PostOrderTraversal(node.Left, action);
-        PostOrderTraversal(node.Right, action);
-        action(node.Value);
-    }
-
-    public List<TValue> LevelOrderTraversal()
-    {
-        List<TValue> list = new();
-        LevelOrderTraversal(list.Add);
-        return list;
-    }
-    void LevelOrderTraversal(Action<TValue> action) //Breadth-first traversal (в ширину)
-    {
-        if (Root == null) return;
-
-        Queue.Queue<BSTNode<TValue>> queue = new();
-        queue.Enqueue(Root);
-
-        while (queue.Count > 0)
+        
+        void Traversal(BSTNode<TValue>? node, Action<TValue> action)
         {
-            BSTNode<TValue> node = queue.Dequeue();
+            if (node == null) return;
+    
+            Traversal(node.Left, action);
+            Traversal(node.Right, action);
             action(node.Value);
-
-            if (node.Left != null)
-                queue.Enqueue(node.Left);
-
-            if (node.Right != null)
-                queue.Enqueue(node.Right);
         }
     }
+    
+    public List<TValue> LevelOrderTraversal()
+    {
+        List<TValue> list = [];
+        Traversal(list.Add);
+        return list;
+        
+        void Traversal(Action<TValue> action) //Breadth-first traversal (в ширину)
+        {
+            if (Root == null) return;
 
+            Queue<BSTNode<TValue>> queue = new();
+            queue.Enqueue(Root);
+
+            while (queue.Count > 0)
+            {
+                var node = queue.Dequeue();
+                action(node.Value);
+
+                if (node.Left != null)
+                    queue.Enqueue(node.Left);
+
+                if (node.Right != null)
+                    queue.Enqueue(node.Right);
+            }
+        }
+    }
+    
     public void Clear()
     {
         ClearRecursive(Root);
@@ -360,17 +367,6 @@ class BinarySearchTree<TValue> where TValue : IComparable<TValue>
         Count += list.Count;
     }
     
-    public void PrintTree() => PrintTree(Root, "", true);
-
-    void PrintTree(BSTNode<TValue>? node, string prefix, bool isTail)
-    {
-        if (node == null) return;
-
-        Console.Write(prefix + (isTail ? "└── " : "├── ") + node.Value + "\n");
-        PrintTree(node.Left, prefix + (isTail ? "    " : "│   "), false);
-        PrintTree(node.Right, prefix + (isTail ? "    " : "│   "), true);
-    }
-
     public BinarySearchTree<TValue> Clone()
     {
         BinarySearchTree<TValue> clonedTree = new();
@@ -395,8 +391,60 @@ class BinarySearchTree<TValue> where TValue : IComparable<TValue>
             Right = CloneNode(node.Right)
         };
     }
+
+    public IEnumerator<TValue> GetEnumerator() => new BSTIterator<TValue>(Root);
+
+    class BSTIterator<TValue> : IEnumerator<TValue>
+    {
+        Stack<BSTNode<TValue>> _stack = new(); //второй способ как стандартный, с очередью
+        BSTNode<TValue> _root;
+        
+        public BSTIterator(BSTNode<TValue> root)
+        {
+            _root = root;
+            StackAllLeft(root);
+        }
+        
+        void StackAllLeft(BSTNode<TValue>? node) {
+            while (node != null) {
+                _stack.Push(node);
+                node = node.Left!;
+            }
+        }
+        
+        public bool MoveNext()
+        {
+            if (_stack.Count > 0)
+            {
+                var node = _stack.Pop();
+                Current = node.Value;
+                StackAllLeft(node.Right);
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public void Reset()
+        {
+            _stack.Clear();
+            StackAllLeft(_root); 
+        }
+
+        public TValue Current { get; private set; }
+
+        object IEnumerator.Current => Current;
+
+        public void Dispose()
+        {
+            
+        }
+    } 
+
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     
-    //Другие алгоритмы
+    #region OtherAlgos
     
     void Invert() => Invert(Root);
 
@@ -464,4 +512,46 @@ class BinarySearchTree<TValue> where TValue : IComparable<TValue>
     
     public int CountNodes() => CountNodes(Root); //Count overall amount of nodes
     int CountNodes(BSTNode<TValue>? node) => node == null ? 0 : 1 + CountNodes(node.Left) + CountNodes(node.Right);
+    
+    /// <summary>
+    /// ищет узел, который является наибольшим значением, меньшим, чем value (предшественник).
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public BSTNode<TValue>? FindPredecessor(TValue value)
+    {
+        return Find(Root, value);
+        
+        BSTNode<TValue>? Find(BSTNode<TValue>? node, TValue value)
+        {
+            if (node == null) return null;
+
+            if (node.Value.CompareTo(value) >= 0)
+                return Find(node.Left, value);
+
+            return Find(node.Right, value) ?? node;
+        }
+    }
+    
+    /// <summary>
+    /// ищет узел, который является наименьшим значением, большим, чем value (преемник).
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public BSTNode<TValue>? FindSuccessor(TValue value)
+    {
+        return Find(Root, value);
+        
+        BSTNode<TValue>? Find(BSTNode<TValue>? node, TValue value)
+        {
+            if (node == null) return null;
+
+            if (node.Value.CompareTo(value) <= 0)
+                return Find(node.Right, value);
+
+            return Find(node.Left, value) ?? node;
+        }
+    }
+    
+    #endregion
 }

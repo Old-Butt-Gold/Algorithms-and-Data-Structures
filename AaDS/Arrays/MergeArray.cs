@@ -1,4 +1,4 @@
-﻿namespace AaDS.Sortings;
+﻿namespace AaDS.Arrays;
 
 public static class MergeArray
 {

@@ -90,4 +90,11 @@ class Stack<T> : IEnumerable<T>
     }
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    
+    #region OtherAlgos
+    
+    
+    
+    #endregion
+    
 }

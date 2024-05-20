@@ -9,7 +9,7 @@ static class Subset
     {
         var result = new List<List<T>>();
 
-        Recurse(0, new());
+        Recurse(0, []);
 
         return result;
         

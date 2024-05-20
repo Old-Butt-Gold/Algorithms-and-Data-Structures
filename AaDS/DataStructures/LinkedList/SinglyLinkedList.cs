@@ -274,7 +274,7 @@ class SinglyLinkedList<T> : IEnumerable<T>
     
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     
-    //Методы для других целей
+    #region OtherAlgos
     
     Node<T> MergeTwoSortedLists(Node<T> list1, Node<T> list2) {
         Node<T> dummyHead = new(); 
@@ -391,5 +391,7 @@ class SinglyLinkedList<T> : IEnumerable<T>
 
         return sentinel.Next;
     }
+    
+    #endregion
 }
 
