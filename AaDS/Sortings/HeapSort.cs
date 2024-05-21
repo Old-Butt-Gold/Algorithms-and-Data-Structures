@@ -4,23 +4,22 @@ namespace AaDS.Sortings;
 
 static class HeapSort<T> where T : IComparable<T>
 {
-    public static List<T> Sort(IEnumerable<T> collection, SortDirection sortDirection = SortDirection.Ascending)
+    public static void Sort(IList<T> collection, SortDirection sortDirection = SortDirection.Ascending)
     {
         CustomComparer<T> comparer = new CustomComparer<T>(sortDirection, Comparer<T>.Default);
-        List<T> arr = collection.ToList();
-        for (int i = arr.Count / 2 - 1; i >= 0; i--)
-            Heapify(arr, arr.Count, i, comparer);
-        
-        for (int i = arr.Count - 1; i >= 0; i--)
+        for (int i = collection.Count / 2 - 1; i > -1; i--)
         {
-            (arr[0], arr[i]) = (arr[i], arr[0]);
-            Heapify(arr, i, 0, comparer);
+            Heapify(collection, collection.Count, i, comparer);
         }
-
-        return arr;
+        
+        for (int i = collection.Count - 1; i > -1; i--)
+        {
+            (collection[0], collection[i]) = (collection[i], collection[0]);
+            Heapify(collection, i, 0, comparer);
+        }
     }
 
-    static void Heapify(List<T> arr, int n, int i, CustomComparer<T> comparer)
+    static void Heapify(IList<T> arr, int n, int i, CustomComparer<T> comparer)
     {
         int largest = i;
         int left = 2 * i + 1;

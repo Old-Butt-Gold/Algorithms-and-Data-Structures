@@ -6,15 +6,13 @@ static class QuickSort<T> where T : IComparable<T>
 {
     static CustomComparer<T> _comparer;
 
-    public static List<T> Sort(IEnumerable<T> collection, SortDirection sortDirection = SortDirection.Ascending)
+    public static void Sort(IList<T> collection, SortDirection sortDirection = SortDirection.Ascending)
     {
-        List<T> list = collection.ToList();
         _comparer = new CustomComparer<T>(sortDirection, Comparer<T>.Default);
-        QSort(list, 0, list.Count - 1);
-        return list;
+        QSort(collection, 0, collection.Count - 1);
     }
 
-    static int Partition(List<T> list, int left, int right)
+    static int Partition(IList<T> list, int left, int right)
     {
         T pivot = list[left];
         int j = left;
@@ -32,7 +30,7 @@ static class QuickSort<T> where T : IComparable<T>
         return j;
     }
 
-    static void QSort(List<T> list, int left, int right)
+    static void QSort(IList<T> list, int left, int right)
     {
         while (left < right)
         {

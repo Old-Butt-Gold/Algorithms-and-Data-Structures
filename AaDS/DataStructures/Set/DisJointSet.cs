@@ -33,10 +33,10 @@ public class DisJointSet<T> : IEnumerable<T>
     
     public T FindSet(T member)
     {
-        if (!_set.ContainsKey(member)) 
+        if (!_set.TryGetValue(member, out var value)) 
             throw new Exception("No such set with given member.");
 
-        return FindSet(_set[member]).Data;
+        return FindSet(value).Data;
     }
 
     DisJointSetNode<T> FindSet(DisJointSetNode<T> node)
@@ -89,11 +89,11 @@ public class DisJointSet<T> : IEnumerable<T>
     public bool IsConnected(T x, T y) => EqualityComparer<T>.Default.Equals(FindSet(x), FindSet(y));
 
     public int ClusterSize(T member) {
-        if (!_set.ContainsKey(member)) {
+        if (!_set.TryGetValue(member, out var value)) {
             throw new ArgumentException("No such set with the given member.");
         }
 
-        return FindSet(_set[member]).Size;
+        return FindSet(value).Size;
     }
     
 }

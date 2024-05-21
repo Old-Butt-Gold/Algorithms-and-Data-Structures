@@ -252,91 +252,117 @@ class BinarySearchTree<TValue> : IEnumerable<TValue> where TValue : IComparable<
     
     public List<TValue> PreOrderTraversal()
     {
-        List<TValue> list = new();
-        Traversal(Root, list.Add);
-        return list;
-        
-        void Traversal(BSTNode<TValue>? node, Action<TValue> action)
-        {
-            if (node == null) return;
+        List<TValue> temp = new();
+        PreOrderTraversal(Root, temp);
+        return temp;
+    }
     
-            action(node.Value);
-            Traversal(node.Left, action);
-            Traversal(node.Right, action);
-        }
+    public void PreOrderTraversal(IList<TValue> list)
+    {
+        list.Clear();
+        PreOrderTraversal(Root, list);
+    }
+
+    public void PreOrderTraversal(BSTNode<TValue>? node, IList<TValue> list)
+    {
+        if (node == null) return;
+    
+        list.Add(node.Value);
+        PreOrderTraversal(node.Left, list);
+        PreOrderTraversal(node.Right, list);
     }
     
     public List<TValue> InOrderTraversal()
     {
-        List<TValue> list = new();
-        Traversal(Root, list.Add);
-        return list;
-        
-        void Traversal(BSTNode<TValue>? node, Action<TValue> action)
-        {
-            if (node == null) return;
-            Traversal(node.Left, action);
-            action(node.Value);
-            Traversal(node.Right, action);
-        }
+        List<TValue> temp = new();
+        InOrderTraversal(Root, temp);
+        return temp;
+    }
+    
+    public void InOrderTraversal(IList<TValue> list)
+    {
+        list.Clear();
+        InOrderTraversal(Root, list);
     }
 
+    void InOrderTraversal(BSTNode<TValue>? node, IList<TValue> list)
+    {
+        if (node == null) return;
+        
+        InOrderTraversal(node.Left, list);
+        list.Add(node.Value);
+        InOrderTraversal(node.Right, list);
+    }
+    
     public List<TValue> ReverseInOrderTraversal()
     {
-        List<TValue> list = new();
-        Traversal(Root, list.Add);
-        return list;
+        List<TValue> temp = new();
+        ReverseInOrderTraversal(Root, temp);
+        return temp;
+    }
+    
+    public void ReverseInOrderTraversal(IList<TValue> list)
+    {
+        list.Clear();
+        ReverseInOrderTraversal(Root, list);
+    }
+
+    void ReverseInOrderTraversal(BSTNode<TValue>? node, IList<TValue> list)
+    {
+        if (node == null) return;
         
-        void Traversal(BSTNode<TValue>? node, Action<TValue> action)
-        {
-            if (node == null) return;
-        
-            Traversal(node.Right, action);
-            action(node.Value);
-            Traversal(node.Left, action);
-        }
+        ReverseInOrderTraversal(node.Right, list);
+        list.Add(node.Value);
+        ReverseInOrderTraversal(node.Left, list);
     }
     
     public List<TValue> PostOrderTraversal()
     {
-        List<TValue> list = new();
-        Traversal(Root, list.Add);
-        return list;
-        
-        void Traversal(BSTNode<TValue>? node, Action<TValue> action)
-        {
-            if (node == null) return;
+        List<TValue> temp = new();
+        PostOrderTraversal(Root, temp);
+        return temp;
+    }
     
-            Traversal(node.Left, action);
-            Traversal(node.Right, action);
-            action(node.Value);
-        }
+    public void PostOrderTraversal(IList<TValue> list)
+    {
+        list.Clear();
+        PostOrderTraversal(Root, list);
+    }
+
+    void PostOrderTraversal(BSTNode<TValue>? node, IList<TValue> list)
+    {
+        if (node == null) return;
+    
+        PostOrderTraversal(node.Left, list);
+        PostOrderTraversal(node.Right, list);
+        list.Add(node.Value);
     }
     
     public List<TValue> LevelOrderTraversal()
     {
-        List<TValue> list = [];
-        Traversal(list.Add);
-        return list;
-        
-        void Traversal(Action<TValue> action) //Breadth-first traversal (в ширину)
+        List<TValue> temp = new();
+        LevelOrderTraversal(temp);
+        return temp;
+    }
+    
+    void LevelOrderTraversal(IList<TValue> list) //Breadth-first traversal (в ширину)
+    {
+        list.Clear();
+        if (Root == null) return;
+
+        Queue.Queue<BSTNode<TValue>> queue = new();
+        queue.Enqueue(Root);
+
+        while (queue.Count > 0)
         {
-            if (Root == null) return;
+            var node = queue.Dequeue();
+            list.Add(node.Value);
 
-            Queue<BSTNode<TValue>> queue = new();
-            queue.Enqueue(Root);
+            if (node.Left != null)
+                queue.Enqueue(node.Left);
 
-            while (queue.Count > 0)
-            {
-                var node = queue.Dequeue();
-                action(node.Value);
-
-                if (node.Left != null)
-                    queue.Enqueue(node.Left);
-
-                if (node.Right != null)
-                    queue.Enqueue(node.Right);
-            }
+            if (node.Right != null)
+                queue.Enqueue(node.Right);
         }
     }
     
@@ -378,20 +404,20 @@ class BinarySearchTree<TValue> : IEnumerable<TValue> where TValue : IComparable<
         }
 
         return clonedTree;
-    }
-
-    BSTNode<TValue>? CloneNode(BSTNode<TValue>? node)
-    {
-        if (node == null)
-            return null;
-
-        return new(node.Value)
+        
+        BSTNode<TValue>? CloneNode(BSTNode<TValue>? node)
         {
-            Left = CloneNode(node.Left),
-            Right = CloneNode(node.Right)
-        };
-    }
+            if (node == null)
+                return null;
 
+            return new(node.Value)
+            {
+                Left = CloneNode(node.Left),
+                Right = CloneNode(node.Right)
+            };
+        }
+    }
+    
     public IEnumerator<TValue> GetEnumerator() => new BSTIterator<TValue>(Root);
 
     class BSTIterator<TValue> : IEnumerator<TValue>
@@ -446,19 +472,30 @@ class BinarySearchTree<TValue> : IEnumerable<TValue> where TValue : IComparable<
     
     #region OtherAlgos
     
-    void Invert() => Invert(Root);
-
-    void Invert(BSTNode<TValue>? node)
+    /// <summary>
+    /// Invert the binary search tree by swapping left and right children recursively.
+    /// </summary>
+    void Invert()
     {
-        if (node == null)
-            return;
+        InvertTree(Root);
+        
+        void InvertTree(BSTNode<TValue>? node)
+        {
+            if (node == null)
+                return;
 
-        (node.Left, node.Right) = (node.Right, node.Left);
+            (node.Left, node.Right) = (node.Right, node.Left);
 
-        Invert(node.Left);
-        Invert(node.Right);
+            InvertTree(node.Left);
+            InvertTree(node.Right);
+        }
     }
     
+    /// <summary>
+    /// Checks if the binary tree is symmetric around its center.
+    /// </summary>
+    /// <param name="root"></param>
+    /// <returns></returns>
     bool IsSymmetric(BSTNode<TValue> root)
     {
         return Dfs(root.Left, root.Right);
@@ -477,6 +514,11 @@ class BinarySearchTree<TValue> : IEnumerable<TValue> where TValue : IComparable<
         }
     }
     
+    /// <summary>
+    /// Computes the maximum depth (height) of the binary tree.
+    /// </summary>
+    /// <param name="root"></param>
+    /// <returns></returns>
     int MaxDepth(BSTNode<TValue>? root) {
         if (root is null) return 0;
 
@@ -485,6 +527,12 @@ class BinarySearchTree<TValue> : IEnumerable<TValue> where TValue : IComparable<
         return Math.Max(left, right) + 1;
     }
     
+    /// <summary>
+    /// Determines if two binary trees are identical.
+    /// </summary>
+    /// <param name="p"></param>
+    /// <param name="q"></param>
+    /// <returns></returns>
     bool IsSameTree(BSTNode<TValue>? p, BSTNode<TValue>? q) {
         if (p is null && q is null) return true;
         if (p is null || q is null) return false;
@@ -510,15 +558,24 @@ class BinarySearchTree<TValue> : IEnumerable<TValue> where TValue : IComparable<
         return HasPathSum(root.Left, currentSum) || HasPathSum(root.Right, currentSum);
     }
     
-    public int CountNodes() => CountNodes(Root); //Count overall amount of nodes
-    int CountNodes(BSTNode<TValue>? node) => node == null ? 0 : 1 + CountNodes(node.Left) + CountNodes(node.Right);
+    /// <summary>
+    /// Counts the total number of nodes in the binary tree.
+    /// </summary>
+    /// <returns></returns>
+    public int CountNodes()
+    {
+        return Count(Root);
+        //Count overall amount of nodes
+        
+        int Count(BSTNode<TValue>? node) => node == null ? 0 : 1 + Count(node.Left) + Count(node.Right);
+    }
     
     /// <summary>
     /// ищет узел, который является наибольшим значением, меньшим, чем value (предшественник).
     /// </summary>
     /// <param name="value"></param>
     /// <returns></returns>
-    public BSTNode<TValue>? FindPredecessor(TValue value)
+    BSTNode<TValue>? FindPredecessor(TValue value)
     {
         return Find(Root, value);
         
@@ -538,7 +595,7 @@ class BinarySearchTree<TValue> : IEnumerable<TValue> where TValue : IComparable<
     /// </summary>
     /// <param name="value"></param>
     /// <returns></returns>
-    public BSTNode<TValue>? FindSuccessor(TValue value)
+    BSTNode<TValue>? FindSuccessor(TValue value)
     {
         return Find(Root, value);
         
@@ -553,5 +610,179 @@ class BinarySearchTree<TValue> : IEnumerable<TValue> where TValue : IComparable<
         }
     }
     
+    /// <summary>
+    /// Given the root of a binary tree, flatten the tree into a "linked list" (right-order).
+    /// The "linked list" should be in the same order as a pre-order traversal of the binary tree.
+    /// </summary>
+    /// <param name="root"></param>
+    void Flatten(BSTNode<TValue> root)
+    {
+        if (root is null) return;
+        
+        Flatten(root.Left);
+        Flatten(root.Right);
+
+        if (root.Left != null)
+        {
+            var right = root.Right;
+            root.Right = root.Left;
+            root.Left = null;
+            var last = root;
+            while (last.Right != null)
+            {
+                last = last.Right;
+            }
+
+            last.Right = right;
+        }
+    }
+    
+    /// <summary>
+    /// Populate each next pointer to point to its next right node. If there is no next right node, the next pointer should be set to NULL.
+    /// </summary>
+    /// <param name="root"></param>
+    /// <returns></returns>
+    NodeNext? Connect(NodeNext? root)
+    {
+        if (root is null) return root;
+        Queue<NodeNext> queue = new();
+        queue.Enqueue(root);
+        while (queue.Count > 0)
+        {
+            int count = queue.Count;
+            NodeNext? prev = null;
+            for (int i = 0; i < count; i++)
+            {
+                var current = queue.Dequeue();
+                if (current.right != null) queue.Enqueue(current.right);
+                if (current.left != null) queue.Enqueue(current.left);
+                current.next = prev;
+                prev = current;
+            }
+        }
+
+        return root;
+    }
+    
+    class NodeNext(int val = 0, NodeNext left = null, NodeNext right = null, NodeNext next = null)
+    {
+        public int val = val;
+        public NodeNext left = left;
+        public NodeNext right = right;
+        public NodeNext next = next;
+    }
+    
+    /// <summary>
+    /// Given the root of a binary tree, imagine yourself standing on the right side of it,
+    /// return the values of the nodes you can see ordered from top to bottom.
+    /// </summary>
+    /// <param name="root"></param>
+    /// <returns></returns>
+    IList<TValue> RightSideView(BSTNode<TValue> root) {
+        if (root is null) return new List<TValue>();
+
+        List<TValue> result = [];
+        Queue<BSTNode<TValue>> queue = new();
+        queue.Enqueue(root);
+
+        while (queue.Count > 0) {
+            int count = queue.Count;
+            for (int i = 0; i < count; i++) {
+                var node = queue.Dequeue();
+                if (node.Left != null) {
+                    queue.Enqueue(node.Left);
+                }
+                if (node.Right != null) {
+                    queue.Enqueue(node.Right);
+                }
+                if (i == count - 1) {
+                    result.Add(node.Value);
+                }
+            }
+        }
+
+        return result;
+    }
+    
+    /// <summary>
+    /// Given the root of a binary tree, return the level order traversal of its nodes' values. (i.e., from left to right, level by level).
+    /// </summary>
+    /// <param name="root"></param>
+    /// <returns></returns>
+    IList<IList<TValue>> LevelOrder(BSTNode<TValue> root) {
+        if (root is null) return new List<IList<TValue>>();
+        
+        List<IList<TValue>> result = [];
+        Queue<BSTNode<TValue>> queue = new();
+        queue.Enqueue(root);
+        while (queue.Count > 0)
+        {
+            int count = queue.Count;
+            List<TValue> temp = [];
+            for (int i = 0; i < count; i++)
+            {
+                var node = queue.Dequeue();
+                temp.Add(node.Value);
+                
+                if (node.Left != null)
+                {
+                    queue.Enqueue(node.Left);    
+                }
+
+                if (node.Right != null)
+                {
+                    queue.Enqueue(node.Right);
+                }
+            }
+            result.Add(temp);
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Given the root of a binary tree, return the zigzag level order traversal of its nodes' values.
+    /// (i.e., from left to right then right to left for the next level and alternate between).
+    /// </summary>
+    /// <param name="root"></param>
+    /// <returns></returns>
+    public IList<IList<TValue>> ZigzagLevelOrder(BSTNode<TValue>? root)
+    {
+        var result = new List<IList<TValue>>();
+        if (root == null) return result;
+
+        var queue = new Queue<BSTNode<TValue>>();
+        queue.Enqueue(root);
+        bool leftToRight = true;
+
+        while (queue.Count > 0)
+        {
+            int levelSize = queue.Count;
+            var currentLevel = new TValue[levelSize];
+
+            for (int i = 0; i < levelSize; i++)
+            {
+                var node = queue.Dequeue();
+                int index = leftToRight ? i : levelSize - 1 - i;
+                currentLevel[index] = node.Value;
+
+                if (node.Left != null)
+                {
+                    queue.Enqueue(node.Left);
+                }
+
+                if (node.Right != null)
+                {
+                    queue.Enqueue(node.Right);
+                }
+            }
+
+            result.Add(currentLevel);
+            leftToRight = !leftToRight;
+        }
+
+        return result;
+    }
+
     #endregion
 }

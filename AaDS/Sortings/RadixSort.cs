@@ -4,16 +4,14 @@ namespace AaDS.Sortings;
 
 static class RadixSort
 {
-    public static List<int> Sort(IEnumerable<int> array, SortDirection sortDirection = SortDirection.Ascending)
+    public static void Sort(IList<int> array, SortDirection sortDirection = SortDirection.Ascending)
     {
         var @base = 1;
 
-        List<int> arr = array.ToList();
+        if (array.Count < 2)
+            return;
 
-        if (arr.Count < 2)
-            return arr;
-
-        var max = arr.Max(Math.Abs);
+        var max = array.Max(Math.Abs);
 
         while (max / @base > 0)
         {
@@ -22,10 +20,10 @@ static class RadixSort
             for (int i = 0; i < 19; i++)
                 buckets[i] = new();
 
-            for (int i = 0; i < arr.Count; i++)
+            for (int i = 0; i < array.Count; i++)
             {
-                var bucketIndex = arr[i] / @base % 10 + 9; // Для отрицательных чисел
-                buckets[bucketIndex].Add(arr[i]);
+                var bucketIndex = array[i] / @base % 10 + 9; // Для отрицательных чисел
+                buckets[bucketIndex].Add(array[i]);
             }
 
             // Обновляем массив тем, что находится в корзинах
@@ -34,11 +32,9 @@ static class RadixSort
             int index = 0;
             foreach (var bucket in orderedBuckets.Where(x => x.Count > 0))
                 foreach (var item in bucket)
-                    arr[index++] = item;
+                    array[index++] = item;
 
             @base *= 10;
         }
-
-        return arr;
     }
 }

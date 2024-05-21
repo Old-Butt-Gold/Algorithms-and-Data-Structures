@@ -33,6 +33,30 @@ public class DoublyLinkedList<T> : IEnumerable<T>
         if (IsEmpty) throw new InvalidOperationException();
         return _tail!.Data;
     }
+    
+    public bool TryPeekFirst(out T? data)
+    {
+        if (IsEmpty)
+        {
+            data = default;
+            return false;
+        }
+
+        data = _head!.Data;
+        return true;
+    }
+        
+    public bool TryPeekLast(out T? data)
+    {
+        if (IsEmpty)
+        {
+            data = default;
+            return false;
+        }
+
+        data = _tail!.Data;
+        return true;
+    }
 
     public void AddLast(T data)
     {
@@ -92,34 +116,36 @@ public class DoublyLinkedList<T> : IEnumerable<T>
         return null;
     }
 
-    public void RemoveFirst()
+    public T RemoveFirst()
     {
+        if (_head == null) throw new InvalidOperationException();
+
+        T data = _head.Data;
+        _head = _head.Next;
+
         if (_head != null)
-        {
-            _head = _head.Next;
+            _head.Previous = null;
+        else
+            _tail = null;
 
-            if (_head != null)
-                _head.Previous = null;
-            else
-                _tail = null;
-
-            Count--;
-        }
+        Count--;
+        return data;
     }
 
-    public void RemoveLast()
+    public T RemoveLast()
     {
+        if (_tail == null) throw new InvalidOperationException();
+
+        T data = _tail.Data;
+        _tail = _tail.Previous;
+
         if (_tail != null)
-        {
-            _tail = _tail.Previous;
+            _tail.Next = null;
+        else
+            _head = null;
 
-            if (_tail != null)
-                _tail.Next = null;
-            else
-                _head = null;
-
-            Count--;
-        }
+        Count--;
+        return data;
     }
     
     public void AddBefore(DoublyNode<T> existingNode, T newData)
@@ -176,7 +202,6 @@ public class DoublyLinkedList<T> : IEnumerable<T>
 
         return false;
     }
-
     
     public bool Remove(T data)
     {

@@ -17,7 +17,7 @@ static class TimSort<T> where T : IComparable<T>
         return n + r;
     }
 
-    static void InsertionSort(List<T> list, int left, int right)
+    static void InsertionSort(IList<T> list, int left, int right)
     {
         for (int i = left + 1; i <= right; i++)
         {
@@ -32,10 +32,15 @@ static class TimSort<T> where T : IComparable<T>
         }
     }
 
-    static void Merge(List<T> list, int left, int middle, int right)
+    static void Merge(IList<T> list, int left, int middle, int right)
     {
-        List<T> LArr = list.GetRange(left, middle - left + 1);
-        List<T> RArr = list.GetRange(middle + 1, right - middle);
+        List<T> LArr = [];
+        List<T> RArr = [];
+   
+        for (int index = left; index <= middle; index++)
+            LArr.Add(list[index]);
+        for (int index = middle + 1; index <= right; index++)
+            RArr.Add(list[index]);
 
         int i = 0, j = 0, k = left;
 
@@ -49,19 +54,18 @@ static class TimSort<T> where T : IComparable<T>
             list[k++] = RArr[j++];
     }
 
-    public static List<T> Sort(IEnumerable<T> collection, SortDirection sortDirection = SortDirection.Ascending)
+    public static void Sort(IList<T> collection, SortDirection sortDirection = SortDirection.Ascending)
     {
         _comparer = new CustomComparer<T>(sortDirection, Comparer<T>.Default);
-        List<T> arr = collection.ToList();
-        int n = arr.Count;
+        int n = collection.Count;
 
         if (n < 2)
-            return arr;
+            return;
         
         int minRun = MinRunLength(n);
 
         for (int i = 0; i < n; i += minRun)
-            InsertionSort(arr, i, Math.Min(i + minRun - 1, n - 1));
+            InsertionSort(collection, i, Math.Min(i + minRun - 1, n - 1));
 
         for (int size = minRun; size < n; size = 2 * size)
         {
@@ -72,11 +76,9 @@ static class TimSort<T> where T : IComparable<T>
 
                 if (mid < right)
                 {
-                    Merge(arr, left, mid, right);
+                    Merge(collection, left, mid, right);
                 }
             }
         }
-
-        return arr;
     }
 }

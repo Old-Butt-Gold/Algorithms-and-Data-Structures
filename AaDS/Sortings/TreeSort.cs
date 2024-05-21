@@ -5,11 +5,17 @@ namespace AaDS.Sortings;
 
 static class TreeSort<T> where T : IComparable<T>
 {
-    public static List<T> Sort(IEnumerable<T> collection, SortDirection sortDirection = SortDirection.Ascending)
+    public static void Sort(IList<T> collection, SortDirection sortDirection = SortDirection.Ascending)
     {
-        AVLTree<T> tree = new AVLTree<T>(collection);
-        return sortDirection == SortDirection.Ascending 
-            ? tree.InOrderTraversal() 
-            : tree.ReverseInOrderTraversal();
+        var tree = new AVLTree<T>(collection);
+
+        if (sortDirection == SortDirection.Ascending)
+        {
+            tree.InOrderTraversal(collection);
+        }
+        else
+        {
+            tree.ReverseInOrderTraversal(collection);
+        }
     }
 }

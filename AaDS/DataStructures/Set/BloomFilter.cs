@@ -7,7 +7,6 @@ class BloomFilter<T>
     readonly BitArray _filter;
     readonly int _numberOfHashFunctions;
     
-
     public BloomFilter(int expectedSize, double falsePositiveProbability, int numberOfHashFunctions = 2)
     {
         if (expectedSize <= numberOfHashFunctions)

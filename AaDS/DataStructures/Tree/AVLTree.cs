@@ -260,76 +260,101 @@ public class AVLTree<TValue>
     public List<TValue> PreOrderTraversal()
     {
         List<TValue> temp = new();
-        PreOrderTraversal(Root, temp.Add);
+        PreOrderTraversal(Root, temp);
         return temp;
     }
     
-    void PreOrderTraversal(AVLNode<TValue>? node, Action<TValue> action)
+    public void PreOrderTraversal(IList<TValue> list)
+    {
+        list.Clear();
+        PreOrderTraversal(Root, list);
+    }
+
+    public void PreOrderTraversal(AVLNode<TValue>? node, IList<TValue> list)
     {
         if (node == null) return;
     
-        action(node.Value);
-        PreOrderTraversal(node.Left, action);
-        PreOrderTraversal(node.Right, action);
+        list.Add(node.Value);
+        PreOrderTraversal(node.Left, list);
+        PreOrderTraversal(node.Right, list);
     }
     
     public List<TValue> InOrderTraversal()
     {
         List<TValue> temp = new();
-        InOrderTraversal(Root, temp.Add);
+        InOrderTraversal(Root, temp);
         return temp;
     }
+    
+    public void InOrderTraversal(IList<TValue> list)
+    {
+        list.Clear();
+        InOrderTraversal(Root, list);
+    }
 
-    void InOrderTraversal(AVLNode<TValue>? node, Action<TValue> action)
+    void InOrderTraversal(AVLNode<TValue>? node, IList<TValue> list)
     {
         if (node == null) return;
         
-        InOrderTraversal(node.Left, action);
-        action(node.Value);
-        InOrderTraversal(node.Right, action);
+        InOrderTraversal(node.Left, list);
+        list.Add(node.Value);
+        InOrderTraversal(node.Right, list);
     }
     
     public List<TValue> ReverseInOrderTraversal()
     {
         List<TValue> temp = new();
-        ReverseInOrderTraversal(Root, temp.Add);
+        ReverseInOrderTraversal(Root, temp);
         return temp;
     }
+    
+    public void ReverseInOrderTraversal(IList<TValue> list)
+    {
+        list.Clear();
+        ReverseInOrderTraversal(Root, list);
+    }
 
-    void ReverseInOrderTraversal(AVLNode<TValue>? node, Action<TValue> action)
+    void ReverseInOrderTraversal(AVLNode<TValue>? node, IList<TValue> list)
     {
         if (node == null) return;
         
-        ReverseInOrderTraversal(node.Right, action);
-        action(node.Value);
-        ReverseInOrderTraversal(node.Left, action);
+        ReverseInOrderTraversal(node.Right, list);
+        list.Add(node.Value);
+        ReverseInOrderTraversal(node.Left, list);
     }
     
     public List<TValue> PostOrderTraversal()
     {
         List<TValue> temp = new();
-        PostOrderTraversal(Root, temp.Add);
+        PostOrderTraversal(Root, temp);
         return temp;
     }
+    
+    public void PostOrderTraversal(IList<TValue> list)
+    {
+        list.Clear();
+        PostOrderTraversal(Root, list);
+    }
 
-    void PostOrderTraversal(AVLNode<TValue>? node, Action<TValue> action)
+    void PostOrderTraversal(AVLNode<TValue>? node, IList<TValue> list)
     {
         if (node == null) return;
     
-        PostOrderTraversal(node.Left, action);
-        PostOrderTraversal(node.Right, action);
-        action(node.Value);
+        PostOrderTraversal(node.Left, list);
+        PostOrderTraversal(node.Right, list);
+        list.Add(node.Value);
     }
     
     public List<TValue> LevelOrderTraversal()
     {
         List<TValue> temp = new();
-        LevelOrderTraversal(temp.Add);
+        LevelOrderTraversal(temp);
         return temp;
     }
     
-    void LevelOrderTraversal(Action<TValue> action) //Breadth-first traversal (в ширину)
+    void LevelOrderTraversal(IList<TValue> list) //Breadth-first traversal (в ширину)
     {
+        list.Clear();
         if (Root == null) return;
 
         Queue.Queue<AVLNode<TValue>> queue = new();
@@ -338,7 +363,7 @@ public class AVLTree<TValue>
         while (queue.Count > 0)
         {
             AVLNode<TValue> node = queue.Dequeue();
-            action(node.Value);
+            list.Add(node.Value);
 
             if (node.Left != null)
                 queue.Enqueue(node.Left);

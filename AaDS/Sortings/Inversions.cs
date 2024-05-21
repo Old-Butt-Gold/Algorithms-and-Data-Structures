@@ -3,18 +3,22 @@
 static class Inversions
 {
     static int inversions;
-    public static int GetInversions(IEnumerable<int> collection)
+    public static int GetInversions(IList<int> collection)
     {
         inversions = 0;
-        List<int> arr = collection.ToList();
-        MSort(arr, 0, arr.Count - 1);
+        MSort(collection, 0, collection.Count - 1);
         return inversions;
     }
 
-    static void Merge(List<int> arr, int left, int middle, int right)
+    static void Merge(IList<int> arr, int left, int middle, int right)
     {
-        List<int> LArr = arr.GetRange(left, middle - left + 1);
-        List<int> RArr = arr.GetRange(middle + 1, right - middle);
+        List<int> LArr = [];
+        List<int> RArr = [];
+   
+        for (int index = left; index <= middle; index++)
+            LArr.Add(arr[index]);
+        for (int index = middle + 1; index <= right; index++)
+            RArr.Add(arr[index]);
    
         int i = 0, j = 0, k = left;
 
@@ -25,7 +29,7 @@ static class Inversions
             else
             {
                 arr[k++] = RArr[j++];
-                inversions += LArr.Count - 1;
+                inversions += LArr.Count - i;
             }
         }
             
@@ -36,7 +40,7 @@ static class Inversions
  
     }
  
-    static void MSort(List<int> arr, int left, int right)
+    static void MSort(IList<int> arr, int left, int right)
     {
         if (left >= right) return;
         int middle = (left + right) / 2;
