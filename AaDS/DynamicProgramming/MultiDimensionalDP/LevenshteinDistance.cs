@@ -6,12 +6,14 @@ class LevenshteinDistance
 
     static int Min(int a, int b, int c) => Math.Min(Math.Min(a, b), c);
 
-    int GetDistanceRecursive(string one, string two)
+    
+    public static int GetDistanceRecursive(string one, string two)
     {
         return Distance(one.Length, two.Length);
 
         int Distance(int i, int j)
         {
+            Console.WriteLine(i + ":" + j);
             if (i is 0) return j;
             if (j is 0) return i;
 
@@ -22,11 +24,11 @@ class LevenshteinDistance
         }
     }
     
-    static int GetLevenshteinDistance(string one, string two)
+    public static int GetLevenshteinDistance(string one, string two)
     {
         int[,] distanceMatrix = new int[one.Length + 1, two.Length + 1];
         
-        for (int i = 0; i < one.Length; i++)
+        for (int i = 0; i <= one.Length; i++)
             distanceMatrix[i, 0] = i;
 
         for (int i = 0; i <= two.Length; i++)

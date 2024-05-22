@@ -3,7 +3,7 @@ using AaDS.shared;
 
 namespace AaDS.DataStructures.Heap;
 
-class BinaryHeap<T> : IEnumerable<T> where T : IComparable<T>//Как PriorityQueue
+class BinaryHeap<T> : IEnumerable<T> where T : IComparable<T>//As PriorityQueue
 {
     List<T> _data = new();
     public bool IsMinHeap { get; }
@@ -58,7 +58,7 @@ class BinaryHeap<T> : IEnumerable<T> where T : IComparable<T>//Как PriorityQu
         HeapifyUp(Count - 1);
     }
 
-    void HeapifyUp(int index) //в MaxHeap менять знак сравнения
+    void HeapifyUp(int index) //In MaxHeap change comparative sign in comparer(there it's changes by sortDirection)
     {
         int parent = (index - 1) / 2;
 
@@ -102,7 +102,7 @@ class BinaryHeap<T> : IEnumerable<T> where T : IComparable<T>//Как PriorityQu
             Enqueue(item);
     }
     
-    void HeapifyDown(int index) //в MaxHeap менять знак сравнения
+    void HeapifyDown(int index) //In MaxHeap change comparative sign in comparer(there it's changes by sortDirection)
     {
         int left = 2 * index + 1;
         int right = 2 * index + 2;

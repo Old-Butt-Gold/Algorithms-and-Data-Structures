@@ -746,7 +746,7 @@ class BinarySearchTree<TValue> : IEnumerable<TValue> where TValue : IComparable<
     /// </summary>
     /// <param name="root"></param>
     /// <returns></returns>
-    public IList<IList<TValue>> ZigzagLevelOrder(BSTNode<TValue>? root)
+    IList<IList<TValue>> ZigzagLevelOrder(BSTNode<TValue>? root)
     {
         var result = new List<IList<TValue>>();
         if (root == null) return result;
@@ -779,6 +779,39 @@ class BinarySearchTree<TValue> : IEnumerable<TValue> where TValue : IComparable<
 
             result.Add(currentLevel);
             leftToRight = !leftToRight;
+        }
+
+        return result;
+    }
+    
+    /// <summary>
+    /// Given the root of a binary tree, return the average value of the nodes on each level in the form of an array.
+    /// </summary>
+    /// <param name="root"></param>
+    /// <returns></returns>
+    IList<double> AverageOfLevels(BSTNode<int> root) {
+        var result = new List<double>();
+        if (root == null) return result;
+
+        var queue = new Queue<BSTNode<int>>();
+        queue.Enqueue(root);
+        bool leftToRight = true;
+
+        while (queue.Count > 0)
+        {
+            double temp = 0;
+            int levelSize = queue.Count;
+
+            for (int i = 0; i < levelSize; i++)
+            {
+                var node = queue.Dequeue();
+                temp += node.Value;
+                if (node.Left != null) queue.Enqueue(node.Left);
+                if (node.Right != null) queue.Enqueue(node.Right);
+            }
+
+            temp /= levelSize;
+            result.Add(Math.Round(temp, 5));
         }
 
         return result;

@@ -52,7 +52,7 @@ class SegmentTree<T> : IEnumerable<T>
     public void Update(int idx, T value) 
         => Update(0, 0, Count - 1, idx, value);
 
-    private void Update(int node, int start, int end, int idx, T value)
+    void Update(int node, int start, int end, int idx, T value)
     {
         if (start == end)
         {
@@ -81,7 +81,7 @@ class SegmentTree<T> : IEnumerable<T>
     public T Query(int left, int right) 
         => Query(0, 0, Count - 1, left, right);
 
-    private T Query(int node, int start, int end, int left, int right)
+    T Query(int node, int start, int end, int left, int right)
     {
         if (right < start || end < left)
         {

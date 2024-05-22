@@ -20,17 +20,22 @@ class SinglyLinkedList<T> : IEnumerable<T>
     
     public void Reverse()
     {
-        if (_head is null) return;
-        Node<T> tail = _head;
-        Node<T>? temp = _head.Next;
-        _head!.Next = null;
-        while (temp != null)
+        if (_head == null) return;
+        
+        Node<T>? prev = null;
+        var current = _head;
+
+        _tail = _head;
+        
+        while (current != null)
         {
-            Node<T> next = new (temp.Data) { Next = _head };
-            temp = temp.Next;
-            _head = next;
+            var next = current.Next;
+            current.Next = prev;
+            prev = current; 
+            current = next;
         }
-        _tail = tail;
+        
+        _head = prev;
     }
 
     public void AddLast(T data)

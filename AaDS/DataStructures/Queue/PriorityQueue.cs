@@ -5,7 +5,7 @@ namespace AaDS.DataStructures.Queue;
 
 class PriorityQueue<T> : IEnumerable<T> where T : IComparable<T>
 {
-    List<T> data = new();
+    List<T> _data = new();
     public bool IsMinHeap { get; }
     readonly CustomComparer<T> _comparer;
     
@@ -15,23 +15,23 @@ class PriorityQueue<T> : IEnumerable<T> where T : IComparable<T>
         _comparer = new CustomComparer<T>(sortDirection, Comparer<T>.Default);
     }
     
-    public int Count => data.Count;
+    public int Count => _data.Count;
 
     public bool IsEmpty => Count == 0;
 
     public void Enqueue(T item)
     {
-        data.Add(item);
+        _data.Add(item);
         HeapifyUp(Count - 1);
     }
 
-    void HeapifyUp(int index) //в MaxHeap менять знак сравнения
+    void HeapifyUp(int index)
     {
         int parent = (index - 1) / 2;
 
-        if (parent > -1 && _comparer.Compare(data[index], data[parent]) < 0)
+        if (parent > -1 && _comparer.Compare(_data[index], _data[parent]) < 0)
         {
-            (data[index], data[parent]) = (data[parent], data[index]);
+            (_data[index], _data[parent]) = (_data[parent], _data[index]);
             HeapifyUp(parent);
         }
     }
@@ -41,23 +41,23 @@ class PriorityQueue<T> : IEnumerable<T> where T : IComparable<T>
         if (Count == 0)
             throw new InvalidOperationException("Queue is empty.");
 
-        return data[0];
+        return _data[0];
     }
 
-    public void Clear() => data.Clear();
+    public void Clear() => _data.Clear();
     
-    public bool Contains(T item) => data.Contains(item);
+    public bool Contains(T item) => _data.Contains(item);
     
-    public T[] ToArray() => data.ToArray();
+    public T[] ToArray() => _data.ToArray();
     
     public T Dequeue()
     {
         if (Count == 0)
             throw new InvalidOperationException("Queue is empty.");
 
-        T front = data[0];
-        data[0] = data[^1];
-        data.RemoveAt(Count - 1);
+        T front = _data[0];
+        _data[0] = _data[^1];
+        _data.RemoveAt(Count - 1);
         HeapifyDown(0);
 
         return front;
@@ -69,26 +69,26 @@ class PriorityQueue<T> : IEnumerable<T> where T : IComparable<T>
             Enqueue(item);
     }
     
-    void HeapifyDown(int index) //в MaxHeap менять знак сравнения
+    void HeapifyDown(int index)
     {
         int left = 2 * index + 1;
         int right = 2 * index + 2;
         int smallest = index;
 
-        if (left < Count && _comparer.Compare(data[left], data[smallest]) < 0) 
+        if (left < Count && _comparer.Compare(_data[left], _data[smallest]) < 0) 
             smallest = left;
 
-        if (right < Count && _comparer.Compare(data[right], data[smallest]) < 0)
+        if (right < Count && _comparer.Compare(_data[right], _data[smallest]) < 0)
             smallest = right;
 
         if (smallest != index)
         {
-            (data[index], data[smallest]) = (data[smallest], data[index]);
+            (_data[index], _data[smallest]) = (_data[smallest], _data[index]);
             HeapifyDown(smallest);
         }
     }
     
-    public IEnumerator<T> GetEnumerator() => data.GetEnumerator();
+    public IEnumerator<T> GetEnumerator() => _data.GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
