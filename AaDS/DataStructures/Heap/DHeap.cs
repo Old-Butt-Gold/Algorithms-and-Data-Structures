@@ -3,22 +3,27 @@ using AaDS.shared;
 
 namespace AaDS.DataStructures.Heap;
 
-class BinaryHeap<T> : IEnumerable<T> where T : IComparable<T>
+class DHeap<T> : IEnumerable<T> where T : IComparable<T>
 {
     List<T> _data = [];
     public bool IsMinHeap { get; }
     readonly CustomComparer<T> _comparer;
+    readonly int _d;  // The "D" in the D-ary Heap
 
-    public BinaryHeap(SortDirection sortDirection = SortDirection.Ascending)
+    public DHeap(int d, SortDirection sortDirection = SortDirection.Ascending)
     {
+        if (d < 2)
+            throw new ArgumentException("D must be greater than or equal to 2", nameof(d));
+
+        _d = d;
         IsMinHeap = sortDirection == SortDirection.Ascending;
         _comparer = new CustomComparer<T>(sortDirection, Comparer<T>.Default);
     }
     
-    public BinaryHeap(IEnumerable<T> collection, SortDirection sortDirection = SortDirection.Ascending) : this(sortDirection)
+    public DHeap(IEnumerable<T> collection, int d, SortDirection sortDirection = SortDirection.Ascending) : this(d, sortDirection)
     {
         _data = collection.ToList();
-        for (int i = Count / 2; i >= 0; i--)
+        for (int i = Count / _d; i > -1; i--)
             Heapify(i);
     }
     
@@ -26,19 +31,15 @@ class BinaryHeap<T> : IEnumerable<T> where T : IComparable<T>
 
     public bool IsEmpty => Count == 0;
 
-    //Returns the parent node index of node at index i 
-    int Parent(int i) => (i - 1) / 2;
+    // Returns the parent node index of node at index i 
+    int Parent(int i) => (i - 1) / _d;
 
-    //get index of left child of node at index i
-    int Left(int i) => 2 * i + 1;
-
-    //get index of right child of node at index i
-    int Right(int i) => 2 * i + 2;
+    // Get index of the k-th child of node at index i
+    int Child(int i, int k) => _d * i + k + 1;
     
     public void Enqueue(T item)
     {
         _data.Add(item);
-
         int i = Count - 1;
 
         while (i > 0 && _comparer.Compare(_data[Parent(i)], _data[i]) > 0)
@@ -63,15 +64,14 @@ class BinaryHeap<T> : IEnumerable<T> where T : IComparable<T>
     
     void Heapify(int index)
     {
-        int left = Left(index);
-        int right = Right(index);
         int item = index;
 
-        if (left < Count && _comparer.Compare(_data[left], _data[item]) < 0) 
-            item = left;
-
-        if (right < Count && _comparer.Compare(_data[right], _data[item]) < 0)
-            item = right;
+        for (int k = 0; k <= _d; k++)
+        {
+            int childIndex = Child(index, k);
+            if (childIndex < Count && _comparer.Compare(_data[childIndex], _data[item]) < 0)
+                item = childIndex;
+        }
 
         if (item != index)
         {
@@ -94,7 +94,7 @@ class BinaryHeap<T> : IEnumerable<T> where T : IComparable<T>
         Dequeue();
     }
 
-    public void DecreaseKey(int index, T newValue) //IncreaseForMaxHeap
+    public void DecreaseKey(int index, T newValue) // IncreaseForMaxHeap
     {
         _data[index] = newValue;
         

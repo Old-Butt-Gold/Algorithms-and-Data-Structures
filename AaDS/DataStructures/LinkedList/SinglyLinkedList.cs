@@ -352,7 +352,7 @@ class SinglyLinkedList<T> : IEnumerable<T>
     /// </summary>
     /// <param name="lists"></param>
     /// <returns></returns>
-    public Node<T>? MergeKListsDivideAndConqueror(Node<T>?[]? lists)
+    Node<T>? MergeKListsDivideAndConqueror(Node<T>?[]? lists)
     {
         if (lists == null || lists.Length == 0)
             return null;

@@ -7,7 +7,7 @@ static class HeapSort<T> where T : IComparable<T>
     public static void Sort(IList<T> collection, SortDirection sortDirection = SortDirection.Ascending)
     {
         CustomComparer<T> comparer = new CustomComparer<T>(sortDirection, Comparer<T>.Default);
-        for (int i = collection.Count / 2 - 1; i > -1; i--)
+        for (int i = collection.Count / 2; i > -1; i--)
         {
             Heapify(collection, collection.Count, i, comparer);
         }
