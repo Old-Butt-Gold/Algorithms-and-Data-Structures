@@ -280,27 +280,102 @@ class SinglyLinkedList<T> : IEnumerable<T>
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     
     #region OtherAlgos
-    
-    Node<T> MergeTwoSortedLists(Node<T> list1, Node<T> list2) {
-        Node<T> dummyHead = new(); 
-        var current = dummyHead; 
 
-        while (list1 != null && list2 != null) {
-            if (Comparer<T>.Default.Compare(list1.Data, list2.Data) < 0) {
+    Node<T> MergeTwoSortedLists(Node<T> list1, Node<T> list2)
+    {
+        Node<T> dummyHead = new();
+        var current = dummyHead;
+
+        while (list1 != null && list2 != null)
+        {
+            if (Comparer<T>.Default.Compare(list1.Data, list2.Data) < 0)
+            {
                 current.Next = list1;
                 list1 = list1.Next!;
-            } else {
+            }
+            else
+            {
                 current.Next = list2;
                 list2 = list2.Next!;
             }
+
             current = current.Next;
         }
 
         current.Next = list1 != null ? list1 : list2;
 
-        return dummyHead.Next!; 
+        return dummyHead.Next!;
     }
-    
+
+    /// <summary>
+    /// You are given an array of k linked-lists lists, each linked-list is sorted in ascending order.
+    /// Merge all the linked-lists into one sorted linked-list and return it.
+    /// </summary>
+    /// <param name="lists"></param>
+    /// <returns></returns>
+    Node<T>? MergeKListsQueue(Node<T>?[]? lists)
+    {
+        if(lists == null || lists.Length == 0)
+            return null;
+        if (lists.Length == 1) 
+            return lists[0];
+        
+        PriorityQueue<Node<T>, T> result = new();
+        foreach (var list in lists)
+        {
+            if (list != null)
+            {
+                result.Enqueue(list, list.Data);
+            }
+        }
+
+        Node<T> root = new();
+        var current = root;
+        while (result.Count > 0)
+        {
+            var node = result.Dequeue();
+            if (node.Next != null)
+            {
+                result.Enqueue(node.Next, node.Next.Data);
+            }
+
+            current.Next = node;
+            current = current.Next;
+        }
+
+        return root.Next;
+    }
+
+    /// <summary>
+    /// You are given an array of k linked-lists lists, each linked-list is sorted in ascending order.
+    /// Merge all the linked-lists into one sorted linked-list and return it.
+    /// </summary>
+    /// <param name="lists"></param>
+    /// <returns></returns>
+    public Node<T>? MergeKListsDivideAndConqueror(Node<T>?[]? lists)
+    {
+        if (lists == null || lists.Length == 0)
+            return null;
+        if (lists.Length == 1)
+            return lists[0];
+
+
+        var interval = 1;
+        var length = lists.Length;
+
+        while (interval < length)
+        {
+            for (int i = 0; i < length - interval; i += interval * 2)
+            {
+                lists[i] = MergeTwoSortedLists(lists[i], lists[i + interval]);
+            }
+
+            interval *= 2;
+        }
+
+        return lists[0];
+    }
+
     bool HasCycle(Node<T> head) {
         var slow = head;
         var fast = head;

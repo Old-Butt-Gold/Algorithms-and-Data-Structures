@@ -8,4 +8,9 @@
         <LangVersion>default</LangVersion>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Folder Include="Intervals\" />
+      <Folder Include="SlidingWindow\" />
+    </ItemGroup>
+
 </Project>
