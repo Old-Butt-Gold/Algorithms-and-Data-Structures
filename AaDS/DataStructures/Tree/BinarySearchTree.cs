@@ -12,7 +12,7 @@ class BinarySearchTree<TValue> : IEnumerable<TValue> where TValue : IComparable<
 
     public BinarySearchTree(TValue value) => (Root, Count) = (new(value), 1);
 
-    public BinarySearchTree(System.Collections.Generic.IEnumerable<TValue>? collection)
+    public BinarySearchTree(IEnumerable<TValue>? collection)
     {
         if (collection != null)
         {
@@ -815,6 +815,30 @@ class BinarySearchTree<TValue> : IEnumerable<TValue> where TValue : IComparable<
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// Given a binary tree, find the lowest common ancestor (LCA) of two given nodes in the tree.
+    /// According to the definition of LCA on Wikipedia: “The lowest common ancestor is defined between two nodes p and q as the lowest node in T
+    /// that has both p and q as descendants (where we allow a node to be a descendant of itself).”
+    /// </summary>
+    /// <param name="root"></param>
+    /// <param name="p"></param>
+    /// <param name="q"></param>
+    /// <returns></returns>
+    public BSTNode<TValue>? LowestCommonAncestor(BSTNode<TValue>? root, BSTNode<TValue> p, BSTNode<TValue> q)
+    {
+        if (root is null || root == p || root == q) return root;
+
+        var left = LowestCommonAncestor(root.Left, p, q);
+        var right = LowestCommonAncestor(root.Right, p, q);
+
+        if (left != null && right != null)
+        {
+            return root;
+        }
+
+        return left ?? right;
     }
 
     #endregion

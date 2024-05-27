@@ -158,29 +158,23 @@ class Trie
         return words;
     }
 
-    public string GetLongestCommonPrefix(string word)
+    public string GetLongestCommonPrefix()
     {
-        if (word == null)
-            throw new ArgumentNullException(nameof(word));
         var current = _root;
-        StringBuilder commonPrefix = new();
+        var prefix = new StringBuilder();
 
-        foreach (char c in word)
+        while (current.Children.Count == 1 && !current.IsEndOfWord)
         {
-            if (current.Children.TryGetValue(c, out _))
+            foreach (var kvp in current.Children)
             {
-                commonPrefix.Append(c);
-                current = current.Children[c];
-            }
-            else
-            {
-                break;
+                prefix.Append(kvp.Key);
+                current = kvp.Value;
             }
         }
 
-        return commonPrefix.ToString();
+        return prefix.ToString();
     }
-
+    
     void GetAllWordsFromNode(TrieNode node, StringBuilder currentWord, List<string> wordValuePairs)
     {
         if (node.IsEndOfWord)

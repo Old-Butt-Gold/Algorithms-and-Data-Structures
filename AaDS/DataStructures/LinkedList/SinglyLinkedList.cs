@@ -49,6 +49,20 @@ class SinglyLinkedList<T> : IEnumerable<T>
         _tail = node;
         Count++;
     }
+
+    public void AddFirst(T data)
+    {
+        Node<T> node = new(data) { Next = _head };
+        if (Count == 0)
+        {
+            _head = _tail = node;
+        }
+        else
+        {
+            _head = node;
+        }
+        Count++;
+    }
     
     public bool Remove(T data)
     {
@@ -472,6 +486,116 @@ class SinglyLinkedList<T> : IEnumerable<T>
         return sentinel.Next;
     }
     
+    class NodeWithRandom {
+        public int val;
+        public NodeWithRandom next;
+        public NodeWithRandom random;
+    
+        public NodeWithRandom(int _val) {
+            val = _val;
+            next = null;
+            random = null;
+        }
+    }
+
+    /// <summary>
+    /// https://leetcode.com/problems/copy-list-with-random-pointer/?envType=study-plan-v2&envId=top-interview-150
+    /// </summary>
+    /// <param name="head"></param>
+    /// <returns></returns>
+    NodeWithRandom? CopyRandomListDictionary(NodeWithRandom? head) //O(n) memory, O(n) time complexity
+    {
+        if (head is null) return head;
+
+        var oldToNew = new Dictionary<NodeWithRandom, NodeWithRandom>();
+
+        var curr = head;
+        while (curr != null)
+        {
+            oldToNew[curr] = new(curr.val);
+            curr = curr.next;
+        }
+
+        curr = head;
+        while (curr != null)
+        {
+            oldToNew[curr].next = curr.next != null ? oldToNew[curr.next] : null;
+            oldToNew[curr].random = curr.random != null ? oldToNew[curr.random] : null;
+            curr = curr.next;
+        }
+
+        return oldToNew[head];
+    }
+
+    /// <summary>
+    /// Given the head of a linked list and a value x,
+    /// partition it such that all nodes less than x come before nodes greater than or equal to x.
+    /// You should preserve the original relative order of the nodes in each of the two partitions.
+    /// </summary>
+    /// <param name="head"></param>
+    /// <param name="x"></param>
+    /// <returns></returns>
+    Node<int> Partition(Node<int> head, int x)
+    {
+        Node<int> before = new();
+        Node<int> after = new();
+        var beforeCurr = before;
+        var afterCurr = after;
+
+        while (head != null)
+        {
+            if (head.Data < x)
+            {
+                beforeCurr.Next = head;
+                beforeCurr = beforeCurr.Next;
+            }
+            else
+            {
+                afterCurr.Next = head;
+                afterCurr = afterCurr.Next;
+            }
+
+            head = head.Next;
+        }
+
+        afterCurr.Next = null;
+        beforeCurr.Next = after.Next;
+        return before.Next;
+    }
+    
+    /// <summary>
+    /// Given the head of a singly linked list and two integers left and right where left <= right,
+    /// reverse the nodes of the list from position left to position right, and return the reversed list.
+    /// </summary>
+    /// <param name="head"></param>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns></returns>
+    public Node<int>? ReverseBetween(Node<int>? head, int left, int right) {
+        if (head is null || left == right) return head;
+
+        Node<int> dummy = new()
+        {
+            Next = head
+        };
+        var prev = dummy;
+
+        for (int i = 0; i < left - 1; i++) {
+            prev = prev.Next;
+        }
+
+        var current = prev.Next;
+
+        for (int i = 0; i < right - left; i++) {
+            var nextNode = current.Next;
+            current.Next = nextNode.Next;
+            nextNode.Next = prev.Next;
+            prev.Next = nextNode;
+        }
+        
+        return dummy.Next;
+    }
+
     #endregion
 }
 
