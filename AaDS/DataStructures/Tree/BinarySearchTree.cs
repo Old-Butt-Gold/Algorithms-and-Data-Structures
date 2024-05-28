@@ -548,7 +548,7 @@ class BinarySearchTree<TValue> : IEnumerable<TValue> where TValue : IComparable<
     /// <param name="root"></param>
     /// <param name="targetSum"></param>
     /// <returns></returns>
-    public bool HasPathSum(BSTNode<int>? root, int targetSum)
+    bool HasPathSum(BSTNode<int>? root, int targetSum)
     {
         if (root is null) return false;
 
@@ -562,7 +562,7 @@ class BinarySearchTree<TValue> : IEnumerable<TValue> where TValue : IComparable<
     /// Counts the total number of nodes in the binary tree.
     /// </summary>
     /// <returns></returns>
-    public int CountNodes()
+    int CountNodes()
     {
         return Count(Root);
         //Count overall amount of nodes
@@ -826,7 +826,7 @@ class BinarySearchTree<TValue> : IEnumerable<TValue> where TValue : IComparable<
     /// <param name="p"></param>
     /// <param name="q"></param>
     /// <returns></returns>
-    public BSTNode<TValue>? LowestCommonAncestor(BSTNode<TValue>? root, BSTNode<TValue> p, BSTNode<TValue> q)
+    BSTNode<TValue>? LowestCommonAncestor(BSTNode<TValue>? root, BSTNode<TValue> p, BSTNode<TValue> q)
     {
         if (root is null || root == p || root == q) return root;
 
