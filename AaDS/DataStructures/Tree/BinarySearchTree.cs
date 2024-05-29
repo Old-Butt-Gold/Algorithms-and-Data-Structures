@@ -841,5 +841,102 @@ class BinarySearchTree<TValue> : IEnumerable<TValue> where TValue : IComparable<
         return left ?? right;
     }
 
+    /// <summary>
+    /// A path in a binary tree is a sequence of nodes where each pair of adjacent nodes in the sequence has an edge connecting them. A node can only appear in the sequence at most once. Note that the path does not need to pass through the root.
+    /// The path sum of a path is the sum of the node's values in the path.
+    /// Given the root of a binary tree, return the maximum path sum of any non-empty path.
+    /// </summary>
+    /// <param name="root"></param>
+    /// <returns></returns>
+    int MaxPathSum(BSTNode<int>? root)
+    {
+        int maxSum = int.MinValue;
+        Traverse(root);
+        return maxSum;
+
+        int Traverse(BSTNode<int>? node)
+        {
+            if (node == null) return 0;
+
+            int leftSum = Math.Max(0, Traverse(node.Left));
+            int rightSum = Math.Max(0, Traverse(node.Right));
+
+            int pathSum = leftSum + rightSum + node.Value;
+            maxSum = Math.Max(maxSum, pathSum);
+
+            return Math.Max(leftSum, rightSum) + node.Value;
+        }
+    }
+
+    /// <summary>
+    /// Given the root of a Binary Search Tree (BST), return the minimum absolute difference between the values of any two different nodes in the tree.
+    /// </summary>
+    /// <param name="root"></param>
+    /// <returns></returns>
+    int GetMinimumDifference(BSTNode<int>? root)
+    {
+        int lastValue = int.MaxValue;
+        int minimumDelta = int.MaxValue;
+        InorderTraverse(root);
+        return minimumDelta;
+
+        void InorderTraverse(BSTNode<int>? node)
+        {
+            if (node is null) return;
+
+            InorderTraverse(node.Left);
+            minimumDelta = Math.Min(minimumDelta, Math.Abs(lastValue - node.Value));
+
+            lastValue = node.Value;
+            InorderTraverse(node.Right);
+        }
+    }
+
+    /// <summary>
+    /// Given the root of a binary search tree, and an integer k, return the kth smallest value (1-indexed) of all the values of the nodes in the tree.
+    /// </summary>
+    /// <param name="root"></param>
+    /// <param name="k"></param>
+    /// <returns></returns>
+    int KthSmallest(BSTNode<int> root, int k) {
+        int counter = 0;
+        int value = 0;
+        InorderTraverse(root);
+
+        return value;
+
+        void InorderTraverse(BSTNode<int>? node) {
+            if (node == null) return;
+
+            InorderTraverse(node.Left);
+            counter++;
+            if (counter == k)
+            {
+                value = node.Value;
+            }
+
+            InorderTraverse(node.Right);
+        }
+    }
+
+    /// <summary>
+    /// Given the root of a binary tree, determine if it is a valid binary search tree (BST).
+    /// </summary>
+    /// <param name="root"></param>
+    /// <returns></returns>
+    bool IsValidBst(BSTNode<int>? root)
+    {
+        return Traverse(root, int.MinValue, int.MaxValue);
+
+        bool Traverse(BSTNode<int>? node, int min, int max)
+        {
+            if (node is null) return true;
+
+            return node.Value > min && node.Value < max
+                                  && Traverse(node.Left, min, node.Value)
+                                  && Traverse(node.Right, node.Value, max);
+        }
+    }
+
     #endregion
 }
