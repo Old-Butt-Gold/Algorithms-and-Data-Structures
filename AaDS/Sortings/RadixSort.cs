@@ -1,4 +1,5 @@
 ﻿using AaDS.shared;
+using System.Linq;
 
 namespace AaDS.Sortings;
 
@@ -9,38 +10,50 @@ static class RadixSort
 
     static void RadixSortIntegers(IList<int> array, SortDirection sortDirection)
     {
-        var exponent = 1;
-
         if (array.Count < 2)
             return;
 
-        var max = array.Max(Math.Abs);
+        int max = array.Max(Math.Abs);
+        int exponent = 1;
+
+        int[] output = new int[array.Count];
+        int[] count = new int[19]; // from -9 to 9
 
         while (max / exponent > 0)
         {
-            // Создаем корзины для цифр от -9 до 9
-            var buckets = new List<int>[19];
-            for (int i = 0; i < 19; i++)
+            Array.Clear(count, 0, count.Length);
+
+            foreach (var item in array)
             {
-                buckets[i] = [];
+                int bucketIndex = (item / exponent % 10) + 9; // Adjusting index for negative numbers
+                count[bucketIndex]++;
+            }
+
+            for (int i = 1; i < 19; i++)
+            {
+                count[i] += count[i - 1];
+            }
+
+            if (sortDirection == SortDirection.Ascending)
+            {
+                for (int i = array.Count - 1; i > -1; i--)
+                {
+                    int bucketIndex = (array[i] / exponent % 10) + 9;
+                    output[--count[bucketIndex]] = array[i];
+                }
+            }
+            else
+            {
+                for (int i = 0; i < array.Count; i++)
+                {
+                    int bucketIndex = (array[i] / exponent % 10) + 9;
+                    output[--count[bucketIndex]] = array[i];
+                }
             }
 
             for (int i = 0; i < array.Count; i++)
             {
-                var bucketIndex = array[i] / exponent % 10 + 9; // Для отрицательных чисел
-                buckets[bucketIndex].Add(array[i]);
-            }
-
-            // Обновляем массив тем, что находится в корзинах
-            var orderedBuckets = sortDirection == SortDirection.Ascending ? buckets : buckets.Reverse();
-
-            int index = sortDirection == SortDirection.Ascending ? 0 : buckets.Length - 1;
-            foreach (var bucket in orderedBuckets.Where(x => x.Count > 0))
-            {
-                foreach (var item in bucket)
-                {
-                    array[index++] = item;
-                }
+                array[i] = output[i];
             }
 
             exponent *= 10;
@@ -54,36 +67,48 @@ static class RadixSort
     {
         if (array.Count < 2)
             return;
-        
-        // Найдем максимальную длину строки
-        int maxLength = array.Max(str => str.Length);
-        var maxChar = array.SelectMany(str => str).Max() + 1;
 
-        // Сортируем с конца строки к началу
-            
+        int maxLength = array.Max(str => str.Length);
+        int maxChar = array.SelectMany(str => str).Max() + 1;
+
+        string[] output = new string[array.Count];
+        int[] count = new int[maxChar];
+
         for (int digit = maxLength - 1; digit > -1; digit--)
         {
-            var buckets = new List<string>[maxChar];
-            for (int i = 0; i < maxChar; i++)
-            {
-                buckets[i] = [];
-            }
+            Array.Clear(count, 0, count.Length);
 
             foreach (var str in array)
             {
-                int bucketIndex = digit < str.Length ? str[digit] : 0; // Используем 0 для отсутствующих символов
-                buckets[bucketIndex].Add(str);
+                int bucketIndex = digit < str.Length ? str[digit] : 0; // Use 0 for missing characters
+                count[bucketIndex]++;
             }
 
-            var orderedBuckets = sortDirection == SortDirection.Ascending ? buckets : buckets.Reverse();
-
-            int index = 0;
-            foreach (var bucket in orderedBuckets.Where(x => x.Count > 0))
+            for (int i = 1; i < maxChar; i++)
             {
-                foreach (var item in bucket)
+                count[i] += count[i - 1];
+            }
+
+            if (sortDirection == SortDirection.Ascending)
+            {
+                for (int i = array.Count - 1; i > -1; i--)
                 {
-                    array[index++] = item;
+                    int bucketIndex = digit < array[i].Length ? array[i][digit] : 0;
+                    output[--count[bucketIndex]] = array[i];
                 }
+            }
+            else
+            {
+                for (int i = 0; i < array.Count; i++)
+                {
+                    int bucketIndex = digit < array[i].Length ? array[i][digit] : 0;
+                    output[--count[bucketIndex]] = array[i];
+                }
+            }
+
+            for (int i = 0; i < array.Count; i++)
+            {
+                array[i] = output[i];
             }
         }
     }

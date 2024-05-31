@@ -1,34 +1,40 @@
-﻿namespace AaDS.Search;
+﻿using System.Collections;
+
+namespace AaDS.Search;
 
 static class BinarySearch<T> where T : IComparable<T>
 {
-    public static int Search(IEnumerable<T> input, T element)
+    public static int Search(IList<T> list, T element)
     {
-        var list = input.ToList();
         return Search(list, 0, list.Count - 1, element);
     }
 
-    static int Search(List<T> input, int left, int right, T element)
+    static int Search(IList<T> list, int left, int right, T element)
     {
-        if (left <= right)
+        while (left <= right)
         {
             int middle = (left + right) / 2;
-            
-            int comparison = element.CompareTo(input[middle]);
+            int comparison = element.CompareTo(list[middle]);
+
             if (comparison < 0)
-                return Search(input, left, middle - 1, element);
-            if (comparison > 0)
-                return Search(input, middle + 1, right, element);
-            if (comparison == 0)
+            {
+                right = middle - 1;
+            }
+            else if (comparison > 0)
+            {
+                left = middle + 1;
+            }
+            else
+            {
                 return middle;
+            }
         }
 
         return -1;
     }
 
-    public static int Search(IEnumerable<T> input, T element, int left, int right)
+    public static int Search(IList<T> list, T element, int left, int right)
     {
-        var list = input.ToList();
         return Search(list, left, right, element);
     }
 }

@@ -5,7 +5,7 @@ namespace AaDS.DataStructures.Heap;
 
 class BinaryHeap<T> : IEnumerable<T> where T : IComparable<T>
 {
-    List<T> _data = [];
+    readonly List<T> _data = [];
     public bool IsMinHeap { get; }
     readonly CustomComparer<T> _comparer;
 
@@ -41,7 +41,7 @@ class BinaryHeap<T> : IEnumerable<T> where T : IComparable<T>
 
         int i = Count - 1;
 
-        while (i > 0 && _comparer.Compare(_data[Parent(i)], _data[i]) > 0)
+        while (i > 0 && _comparer.Compare(_data[i], _data[Parent(i)]) < 0)
         {
             (_data[i], _data[Parent(i)]) = (_data[Parent(i)], _data[i]);
             i = Parent(i);
@@ -86,12 +86,6 @@ class BinaryHeap<T> : IEnumerable<T> where T : IComparable<T>
             throw new InvalidOperationException("Queue is empty.");
 
         return _data[0];
-    }
-
-    public void Delete(int index)
-    {
-        DecreaseKey(index, _data[0]);
-        Dequeue();
     }
 
     public void DecreaseKey(int index, T newValue) //IncreaseForMaxHeap

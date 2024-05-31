@@ -17,7 +17,7 @@ class CustomComparer<T> : IComparer<T>
         _defaultComparer = defaultComparer;
     }
 
-    public int Compare(T x, T y)
+    public int Compare(T? x, T? y)
     {
         int result = _defaultComparer.Compare(x, y);
         return _sortDirection == SortDirection.Ascending ? result : -result;

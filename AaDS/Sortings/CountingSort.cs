@@ -11,17 +11,31 @@ static class CountingSort
 
         int[] counting = new int[max - min + 1];
 
-        for (int i = 0; i < list.Count; i++)
-            counting[list[i] - min]++;
+        foreach (var item in list)
+            counting[item - min]++;
 
-        int index = sortDirection == SortDirection.Ascending ? 0 : list.Count - 1;
-
-        for (int i = 0; i < counting.Length; i++)
-            while (counting[i]-- > 0)
-                if (sortDirection == SortDirection.Ascending)
+        if (sortDirection == SortDirection.Ascending)
+        {
+            int index = 0;
+            for (int i = 0; i < counting.Length; i++)
+            {
+                while (counting[i]-- > 0)
+                {
                     list[index++] = i + min;
-                else
-                    list[index--] = i + min;
+                }
+            }
+        }
+        else
+        {
+            int index = 0;
+            for (int i = counting.Length - 1; i >= 0; i--)
+            {
+                while (counting[i]-- > 0)
+                {
+                    list[index++] = i + min;
+                }
+            }
+        }
     }
     
 }
