@@ -29,7 +29,7 @@ class RPN
     {
         int counter = 0;
         int i = input.Length - 1;
-        while (i >= 0 && (IsOperator(input[i]) || IsDelimiter(input[i])))
+        while (i > -1 && input[i] != ')' && (IsOperator(input[i]) || IsDelimiter(input[i])))
         {
             counter++;
             i--;
@@ -41,7 +41,6 @@ class RPN
     public static string ConvertToPostfix(string input)
     {
         input = FilterString(input);
-        Console.WriteLine(input);
         StringBuilder output = new(); // String to store the expression
         var operStack = new Stack<char>(); // Stack to store operators
         bool lastCharWasOperator = true; // Track if the last character was an operator
@@ -168,8 +167,8 @@ class RPN
             else if (IsOperator(input[i])) // If the character is an operator
             {
                 // Pop the last two values from the stack
-                var second = stack.Any() ? stack.Pop() : 0;
-                var first = stack.Any() ? stack.Pop() : 0;
+                var first = stack.Pop();
+                var second = stack.Pop();
 
                 switch (input[i]) // Perform the operation according to the operator
                 {

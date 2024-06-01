@@ -43,9 +43,7 @@ class Stack<T> : IEnumerable<T>
     {
         if (!IsEmpty)
         {
-            result = _head!.Data;
-            _head = _head.Next;
-            Count--;
+            result = Pop();
             return true;
         }
         result = default;
@@ -66,20 +64,6 @@ class Stack<T> : IEnumerable<T>
 
     public void Clear() => (_head, Count) = (null, 0);
 
-    public T[] ToArray()
-    {
-        T[] array = new T[Count];
-        int index = 0;
-        Node<T>? current = _head;
-
-        while (current != null)
-        {
-            array[index++] = current.Data;
-            current = current.Next;
-        }
-        return array;
-    }
-    
     public IEnumerator<T> GetEnumerator()
     {
         Node<T>? current = _head;
@@ -155,10 +139,9 @@ class Stack<T> : IEnumerable<T>
                 //you should filter input string (just like in RPN class), so that's the last characters doesn't have any Operators/Delimiters (except ')') at the end
                 //Also there should be no more than one unary operation before the first symbol: like --1, and not ----1
                 //also to handle unary minus use 0 just like in RPN
-                
-                var second = stack.Any() ? stack.Pop() : 0;
-                var first = stack.Any() ? stack.Pop() : 0;
 
+                var first = stack.Pop();
+                var second = stack.Pop();
 
                 switch (token) //И производим над ними действие, согласно оператору
                 {
@@ -225,5 +208,4 @@ class Stack<T> : IEnumerable<T>
     }
 
     #endregion
-    
 }

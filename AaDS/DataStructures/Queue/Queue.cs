@@ -77,19 +77,6 @@ class Queue<T> : IEnumerable<T>
         return false;
     }
 
-    public T[] ToArray()
-    {
-        T[] result = new T[Count];
-        var tempHead = _head;
-        int index = 0;
-        while (tempHead != null)
-        {
-            result[index++] = tempHead.Data;
-            tempHead = tempHead.Next;
-        }
-        return result;
-    }
-
     public IEnumerator<T> GetEnumerator()
     {
         Node<T>? current = _head;

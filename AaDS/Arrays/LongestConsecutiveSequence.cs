@@ -18,7 +18,7 @@ public static class LongestConsecutiveSequence
         HashSet<int> numSet = [..nums];
         int longestStreak = 0;
 
-        foreach (int num in numSet)
+        foreach (var num in numSet)
         {
             if (!numSet.Contains(num - 1))
             {

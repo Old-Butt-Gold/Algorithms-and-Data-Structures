@@ -596,6 +596,27 @@ class SinglyLinkedList<T> : IEnumerable<T>
         return dummy.Next;
     }
 
+    /// <summary>
+    /// You are given two non-empty linked lists representing two non-negative integers. The digits are stored in reverse order, and each of their nodes contains a single digit. Add the two numbers and return the sum as a linked list.
+    /// You may assume the two numbers do not contain any leading zero, except the number 0 itself.
+    /// </summary>
+    /// <param name="l1"></param>
+    /// <param name="l2"></param>
+    /// <param name="carry"></param>
+    /// <returns></returns>
+    public Node<int>? AddTwoNumbers(Node<int>? l1, Node<int>? l2, int carry = 0)
+    {
+        if (l1 == null && l2 == null && carry == 0) 
+            return null;
+
+        int total = (l1?.Data ?? 0) + (l2?.Data ?? 0) + carry;
+        carry = total / 10;
+        return new(total % 10)
+        {
+            Next = AddTwoNumbers(l1?.Next, l2?.Next, carry)
+        };
+    }
+
     #endregion
 }
 
