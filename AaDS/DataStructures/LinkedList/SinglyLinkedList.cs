@@ -606,7 +606,7 @@ class SinglyLinkedList<T> : IEnumerable<T>
     /// <returns></returns>
     public Node<int>? AddTwoNumbers(Node<int>? l1, Node<int>? l2, int carry = 0)
     {
-        if (l1 == null && l2 == null && carry == 0) 
+        if (l1 == null && l2 == null && carry == 0)
             return null;
 
         int total = (l1?.Data ?? 0) + (l2?.Data ?? 0) + carry;

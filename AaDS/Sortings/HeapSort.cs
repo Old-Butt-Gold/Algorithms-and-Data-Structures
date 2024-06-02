@@ -19,22 +19,22 @@ static class HeapSort<T> where T : IComparable<T>
         }
     }
 
-    static void Heapify(IList<T> arr, int n, int i, CustomComparer<T> comparer)
+    static void Heapify(IList<T> arr, int length, int i, CustomComparer<T> comparer)
     {
         int largest = i;
         int left = 2 * i + 1;
         int right = 2 * i + 2;
 
-        if (left < n && comparer.Compare(arr[left], arr[largest]) > 0)
+        if (left < length && comparer.Compare(arr[left], arr[largest]) > 0)
             largest = left;
 
-        if (right < n && comparer.Compare(arr[right], arr[largest]) > 0)
+        if (right < length && comparer.Compare(arr[right], arr[largest]) > 0)
             largest = right;
 
         if (largest != i)
         {
             (arr[i], arr[largest]) = (arr[largest], arr[i]);
-            Heapify(arr, n, largest, comparer);
+            Heapify(arr, length, largest, comparer);
         }
     }
 

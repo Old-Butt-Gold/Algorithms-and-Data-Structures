@@ -9,24 +9,12 @@ static class KMP
     /// </summary>
     public static int KMPSearch(string haystack, string needle)
     {
-        if (string.IsNullOrEmpty(needle)) return 0; // если needle пуст, вернуть 0
-        int[] lps = new int[needle.Length];
+        if (string.IsNullOrEmpty(needle)) 
+            return 0; // если needle пуст, вернуть 0
 
-        // Препроцессинг
-        int pre = 0;
-        for (int i = 1; i < needle.Length; i++)
-        {
-            while (pre > 0 && needle[i] != needle[pre])
-            {
-                pre = lps[pre - 1];
-            }
-            if (needle[pre] == needle[i])
-            {
-                pre++;
-                lps[i] = pre;
-            }
-        }
 
+        var lps = BuildLPS(needle);
+        
         // Основной алгоритм
         int n = 0; // индекс для needle
         for (int h = 0; h < haystack.Length; h++)
@@ -46,6 +34,27 @@ static class KMP
         }
 
         return -1;
+    }
+
+    static int[] BuildLPS(string pattern)
+    {
+        // Препроцессинг
+        int[] lps = new int[pattern.Length];
+        int pre = 0;
+        for (int i = 1; i < pattern.Length; i++)
+        {
+            while (pre > 0 && pattern[i] != pattern[pre])
+            {
+                pre = lps[pre - 1];
+            }
+            if (pattern[pre] == pattern[i])
+            {
+                pre++;
+                lps[i] = pre;
+            }
+        }
+
+        return lps;
     }
 
 }

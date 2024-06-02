@@ -26,6 +26,23 @@ class Trie
             node.IsEndOfWord = false;
         }
     }
+    
+    public string GetLongestCommonPrefix()
+    {
+        var current = _root;
+        var prefix = new StringBuilder(string.Empty);
+
+        while (current.Children.Count == 1 && !current.IsEndOfWord)
+        {
+            foreach (var kvp in current.Children)
+            {
+                prefix.Append(kvp.Key);
+                current = kvp.Value;
+            }
+        }
+
+        return prefix.ToString();
+    }
 
     public void Add(string word)
     {
@@ -37,12 +54,13 @@ class Trie
         var current = _root;
         foreach (char c in word)
         {
-            if (!current.Children.TryGetValue(c, out _))
+            if (!current.Children.TryGetValue(c, out var child))
             {
-                current.Children[c] = new(c);
+                child = new(c);
+                current.Children[c] = child;
             }
 
-            current = current.Children[c];
+            current = child;
         }
 
         if (!current.IsEndOfWord)
@@ -156,23 +174,6 @@ class Trie
         }
 
         return words;
-    }
-
-    public string GetLongestCommonPrefix()
-    {
-        var current = _root;
-        var prefix = new StringBuilder();
-
-        while (current.Children.Count == 1 && !current.IsEndOfWord)
-        {
-            foreach (var kvp in current.Children)
-            {
-                prefix.Append(kvp.Key);
-                current = kvp.Value;
-            }
-        }
-
-        return prefix.ToString();
     }
     
     void GetAllWordsFromNode(TrieNode node, StringBuilder currentWord, List<string> wordValuePairs)

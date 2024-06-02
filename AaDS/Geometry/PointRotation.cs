@@ -1,8 +1,6 @@
-﻿using Point = AaDS.Geometry.Shared.Point;
+﻿using AaDS.Geometry.Shared;
 
 namespace AaDS.Geometry;
-
-using Point = Shared.Point;
 
 /// <summary>
 ///     Rotates given point by given angle about given center.
