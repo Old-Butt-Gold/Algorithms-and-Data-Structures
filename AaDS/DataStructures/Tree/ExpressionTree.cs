@@ -2,119 +2,159 @@
 
 namespace AaDS.DataStructures.Tree;
 
+//For writing expressions without spaces and get unary minus/plus, check RPN class
 class ExpressionTree
 {
     class Node
     {
-        public char Value { get; set; }
+        public string Value { get; set; } 
         public Node? Left { get; set; }
         public Node? Right { get; set; }
 
-        public Node(char value) => Value = value;
+        public Node(string value) => Value = value;
     }
 
-    readonly string _expression;
+    public string Expression { get; set; }
     Node? _root;
 
-    Stack.Stack<Node> valueStack, operatorStack;
+    Stack<Node> _valueStack, _operatorStack;
 
     public ExpressionTree(string expression)
     {
-        _expression = expression;
-        valueStack = new();
-        operatorStack = new();
+        Expression = expression;
+        _valueStack = [];
+        _operatorStack = [];
     }
 
-    int Priority(char op) => op switch
+    int Priority(string op) => op switch // Changed type to string
     {
-        '^' => 3,
-        '*' or '/' or ':' => 2,
-        '+' or '-' => 1,
+        "^" => 3,
+        "*" or "/" or ":" => 2,
+        "+" or "-" => 1,
         _ => 0,
     };
 
-    bool IsOperand(char token) => char.IsLetterOrDigit(token);
+    bool IsOperand(string token) => double.TryParse(token, out _);
 
-    bool IsOperator(char token) => token is '+' or '-' or '*' or '/' or '^' or ':';
+    bool IsOperator(string token) => token is "+" or "-" or "*" or "/" or "^" or ":";
 
     Node PopParent()
     {
-        Node topOperator = operatorStack.Pop();
-        topOperator.Right = valueStack.Pop();
-        topOperator.Left = valueStack.Pop();
+        var topOperator = _operatorStack.Pop();
+        topOperator.Right = _valueStack.Pop();
+        topOperator.Left = _valueStack.Pop();
         return topOperator;
     }
-    
+
     public void BuildTree()
     {
-        foreach (char token in _expression)
+        //should be like ( 1 + 2 ) ^ 3
+        string[] tokens = Expression.Split(' ', StringSplitOptions.RemoveEmptyEntries); 
+        foreach (string token in tokens)
         {
             if (IsOperand(token))
-                valueStack.Push(new(token));
+            {
+                _valueStack.Push(new Node(token));
+            }
             else if (IsOperator(token))
             {
-                Node currentNode = new(token);
-                while (operatorStack.Count > 0 && Priority(operatorStack.Peek().Value) >= Priority(token))
-                    valueStack.Push(PopParent());
-                operatorStack.Push(currentNode);
+                var currentNode = new Node(token);
+                while (_operatorStack.Count > 0 && Priority(_operatorStack.Peek().Value) >= Priority(token))
+                {
+                    _valueStack.Push(PopParent());
+                }
+                _operatorStack.Push(currentNode);
             }
             else switch (token)
             {
-                case '(':
-                    operatorStack.Push(new(token));
+                case "(":
+                    _operatorStack.Push(new Node(token));
                     break;
-                case ')':
+                case ")":
                 {
-                    while (operatorStack.Count > 0 && operatorStack.Peek().Value != '(')
-                        valueStack.Push(PopParent());
-                    operatorStack.Pop(); // Pop the "("
+                    while (_operatorStack.Count > 0 && _operatorStack.Peek().Value != "(")
+                    {
+                        _valueStack.Push(PopParent());
+                    }
+                    _operatorStack.Pop(); // Pop the "("
                     break;
                 }
             }
         }
 
-        while (operatorStack.Count > 0)
-            valueStack.Push(PopParent());
+        while (_operatorStack.Count > 0)
+            _valueStack.Push(PopParent());
 
-        if (valueStack.Count != 1)
+        if (_valueStack.Count != 1)
             throw new InvalidOperationException("Invalid expression");
 
-        _root = valueStack.Pop();
+        _root = _valueStack.Pop();
     }
 
-    public string PrefixTraversal()
+    public double Evaluate()
     {
-        StringBuilder sb = new();
-        PrefixTraversal(_root, sb);
-        return sb.ToString();
-    }
-    
-    void PrefixTraversal(Node? node, StringBuilder sb)
-    {
-        if (node != null)
+        return Evaluate(_root);
+            
+        double Evaluate(Node? node)
         {
-            sb.Append(node.Value);
-            PrefixTraversal(node.Left, sb);
-            PrefixTraversal(node.Right, sb);
+            if (node == null)
+                throw new InvalidOperationException("Invalid expression");
+
+            if (IsOperand(node.Value))
+                return double.Parse(node.Value); // Convert string to double
+            else
+            {
+                double leftValue = Evaluate(node.Left);
+                double rightValue = Evaluate(node.Right);
+                return Calculate(leftValue, rightValue, node.Value); // Perform calculation
+            }
         }
     }
 
-    public string InfixTraversal() => _expression;
+    double Calculate(double left, double right, string op) =>
+        op switch
+        {
+            "+" => left + right,
+            "-" => left - right,
+            "*" => left * right,
+            "/" or ":" => left / right,
+            "^" => Math.Pow(left, right),
+            _ => throw new ArgumentException("Invalid operator"),
+        };
+
+    public string PrefixTraversal()
+    {
+        StringBuilder sb = new StringBuilder();
+        Traversal(_root);
+        return sb.ToString();
+
+        void Traversal(Node? node)
+        {
+            if (node != null)
+            {
+                sb.Append(node.Value).Append(' ');
+                Traversal(node.Left);
+                Traversal(node.Right);
+            }
+        }
+    }
+
+    public string InfixTraversal() => Expression;
 
     public string PostfixTraversal()
     {
-        StringBuilder sb = new();
-        PostfixTraversal(_root, sb);
+        StringBuilder sb = new StringBuilder();
+        Traversal(_root);
         return sb.ToString();
-    }
-    
-    void PostfixTraversal(Node? node, StringBuilder sb)
-    {
-        if (node != null)
+
+        void Traversal(Node? node)
         {
-            PostfixTraversal(node.Left, sb);
-            PostfixTraversal(node.Right, sb);
-            sb.Append(node.Value);
+            if (node != null)
+            {
+                Traversal(node.Left);
+                Traversal(node.Right);
+                sb.Append(node.Value).Append(' ');
+            }
         }
     }
 }

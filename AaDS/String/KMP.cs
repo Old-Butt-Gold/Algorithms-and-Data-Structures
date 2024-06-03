@@ -11,8 +11,7 @@ static class KMP
     {
         if (string.IsNullOrEmpty(needle)) 
             return 0; // если needle пуст, вернуть 0
-
-
+        
         var lps = BuildLPS(needle);
         
         // Основной алгоритм
@@ -36,7 +35,7 @@ static class KMP
         return -1;
     }
 
-    static int[] BuildLPS(string pattern)
+    public static int[] BuildLPS(string pattern)
     {
         // Препроцессинг
         int[] lps = new int[pattern.Length];

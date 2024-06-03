@@ -25,7 +25,7 @@ class Queue<T> : IEnumerable<T>
     public T Dequeue()
     {
         if (Count == 0) throw new InvalidOperationException();
-        T output = _head!.Data;
+        var output = _head!.Data;
         _head = _head.Next;
         Count--;
         return output;
@@ -65,17 +65,6 @@ class Queue<T> : IEnumerable<T>
     public bool IsEmpty => Count == 0;
 
     public void Clear() => (_head, _tail, Count) = (null, null, 0);
- 
-    public bool Contains(T data)
-    {
-        Node<T>? current = _head;
-        while (current != null)
-        {
-            if (EqualityComparer<T>.Default.Equals(current.Data, data)) return true;
-            current = current.Next;
-        }
-        return false;
-    }
 
     public IEnumerator<T> GetEnumerator()
     {
@@ -87,6 +76,5 @@ class Queue<T> : IEnumerable<T>
         }
     }
         
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator(); //Явная реализация интерфейса
-        
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

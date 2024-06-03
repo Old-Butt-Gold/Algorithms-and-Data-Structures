@@ -7,10 +7,10 @@ class BinarySearchTree<TValue> : IEnumerable<TValue> where TValue : IComparable<
 {
     public int Count { get; set; }
     public bool IsEmpty => Count == 0;
-    BSTNode<TValue>? Root;
+    BSTNode<TValue>? _root;
     public BinarySearchTree() { }
 
-    public BinarySearchTree(TValue value) => (Root, Count) = (new(value), 1);
+    public BinarySearchTree(TValue value) => (_root, Count) = (new(value), 1);
 
     public BinarySearchTree(IEnumerable<TValue>? collection)
     {
@@ -19,7 +19,7 @@ class BinarySearchTree<TValue> : IEnumerable<TValue> where TValue : IComparable<
             var sortedList = collection.Distinct().ToList();
             sortedList.Sort();
             Count += sortedList.Count;
-            Root = CreateTreeFromList(sortedList, 0, sortedList.Count - 1);
+            _root = CreateTreeFromList(sortedList, 0, sortedList.Count - 1);
         }
     }
 
@@ -38,124 +38,102 @@ class BinarySearchTree<TValue> : IEnumerable<TValue> where TValue : IComparable<
     {
         if (!Contains(value))
         {
-            Root = AddToNode(Root, value);
+            _root = AddToNode(_root, value);
             Count++;
             return true;
         }
 
         return false;
+        
+        BSTNode<TValue>? AddToNode(BSTNode<TValue>? node, TValue value)
+        {
+            if (node == null)
+                return new(value);
+
+            int comparison = value.CompareTo(node.Value);
+            if (comparison < 0)
+                node.Left = AddToNode(node.Left, value);
+            else if (comparison > 0)
+                node.Right = AddToNode(node.Right, value);
+            return node;
+        }
     }
     
-    BSTNode<TValue>? AddToNode(BSTNode<TValue>? node, TValue value)
+    public bool Contains(TValue value)
     {
-        if (node == null)
-            return new(value);
-
-        int comparison = value.CompareTo(node.Value);
-        if (comparison < 0)
-            node.Left = AddToNode(node.Left, value);
-        else if (comparison > 0)
-            node.Right = AddToNode(node.Right, value);
-        return node;
-    }
-
-    public BSTNode<TValue>? Search(TValue value) => SearchNode(Root, value);
-
-    public bool Contains(TValue value) => Search(value) != null;
-    
-    BSTNode<TValue>? SearchNode(BSTNode<TValue>? Root, TValue value)
-    {
-        if (Root == null) return null;
+        return Search(_root, value) != null;
         
-        int comparison = value.CompareTo(Root.Value);
-        if (comparison == 0)
-            return Root;
-        
-        return SearchNode(comparison < 0 ? Root.Left : Root.Right, value);
+        BSTNode<TValue>? Search(BSTNode<TValue>? node, TValue value)
+        {
+            if (node == null) return null;
+
+            int comparison = value.CompareTo(node.Value);
+            if (comparison == 0)
+                return node;
+
+            return Search(comparison < 0 ? node.Left : node.Right, value);
+        }
     }
 
     public bool Remove(TValue value)
     {
         if (Contains(value))
         {
-            Root = RemoveNode(Root, value);
+            _root = RemoveNode(_root, value);
             Count--;
             return true;
         }
 
         return false;
-    }
-
-    BSTNode<TValue>? RemoveNode(BSTNode<TValue>? root, TValue value)
-    {
-        if (root is null)
-            return root;
-        int comparison = value.CompareTo(root.Value);
-
-        if (comparison < 0)
-            root.Left = RemoveNode(root.Left, value);
-        else if (comparison > 0)
-            root.Right = RemoveNode(root.Right, value);
-        else
-        {
-            if (root.Left == null)
-                return root.Right;
-
-            if (root.Right == null)
-                return root.Left;
-
-            root.Value = FindMinNode(root.Right)!.Value;
-            root.Right = RemoveNode(root.Right, root.Value);
-        }
-
-        return root;
         
-        BSTNode<TValue>? FindMinNode(BSTNode<TValue>? node) => node?.Left == null ? node : FindMinNode(node.Left);
+        BSTNode<TValue>? RemoveNode(BSTNode<TValue>? root, TValue value)
+        {
+            if (root is null)
+                return root;
+            int comparison = value.CompareTo(root.Value);
+
+            if (comparison < 0)
+                root.Left = RemoveNode(root.Left, value);
+            else if (comparison > 0)
+                root.Right = RemoveNode(root.Right, value);
+            else
+            {
+                if (root.Left == null)
+                    return root.Right;
+
+                if (root.Right == null)
+                    return root.Left;
+
+                root.Value = FindMinNode(root.Right)!.Value;
+                root.Right = RemoveNode(root.Right, root.Value);
+            }
+
+            return root;
+        
+            BSTNode<TValue>? FindMinNode(BSTNode<TValue>? node) => node?.Left == null ? node : FindMinNode(node.Left);
+        }
     }
     
     public TValue FindMinValue()
     {
-        return FindMinValueRecursive(Root);
+        return FindMinValueRecursive(_root);
         
         TValue FindMinValueRecursive(BSTNode<TValue>? node) => node.Left == null ? node.Value : FindMinValueRecursive(node.Left);
     }
     
     public TValue FindMaxValue()
     {
-        return FindMaxValueRecursive(Root);
+        return FindMaxValueRecursive(_root);
         
         TValue FindMaxValueRecursive(BSTNode<TValue>? node) => node.Right == null ? node.Value : FindMaxValueRecursive(node.Right);
     }
     
-    public int CountIncompleteNodes()
-    {
-        return Count(Root);
-        
-        int Count(BSTNode<TValue> bstNode)
-        {
-            if (Root is null) 
-                return 0;
-
-            int count = 0;
-
-            if ((Root.Left is null && Root.Right != null) || (Root.Right is null && Root.Left != null))
-            {
-                count++;
-            }
-
-            count += Count(Root.Left);
-            count += Count(Root.Right);
-
-            return count;
-        }
-    }
-    
     public bool RemoveMin()
     {
-        if (Root == null)
+        if (_root == null)
             return false;
 
-        Root = RemoveMinNode(Root);
+        _root = RemoveMinNode(_root);
         Count--;
         return true;
         
@@ -171,10 +149,10 @@ class BinarySearchTree<TValue> : IEnumerable<TValue> where TValue : IComparable<
     
     public bool RemoveMax()
     {
-        if (Root == null)
+        if (_root == null)
             return false;
 
-        Root = RemoveMaxNode(Root);
+        _root = RemoveMaxNode(_root);
         Count--;
         return true;
         
@@ -188,79 +166,17 @@ class BinarySearchTree<TValue> : IEnumerable<TValue> where TValue : IComparable<
         }
     }
     
-    public int GetHeight()
-    {
-        return Height(Root);
-        
-        int Height(BSTNode<TValue>? node) => 
-            node == null ? 0 : Math.Max(Height(node.Left), Height(node.Right)) + 1;
-    }
-    
-    public bool IsBalanced()
-    {
-        return CheckHeight(Root) != -1;
-        
-        int CheckHeight(BSTNode<TValue>? node)
-        {
-            if (node == null)
-                return 0;
-
-            int leftHeight = CheckHeight(node.Left);
-            if (leftHeight == -1) return -1;
-
-            int rightHeight = CheckHeight(node.Right);
-            if (rightHeight == -1) return -1;
-
-            if (Math.Abs(leftHeight - rightHeight) > 1)
-                return -1;
-
-            return Math.Max(leftHeight, rightHeight) + 1;
-        }
-    }
-    
-    public int CountLeaves()
-    {
-        return Count(Root);
-        
-        int Count(BSTNode<TValue>? node)
-        {
-            if (node == null) return 0;
-    
-            if (node.Left == null && node.Right == null)
-                return 1;
-    
-            return Count(node.Left) + Count(node.Right);
-        }
-    }
-    
-    public int CountNodesAtLevel(int level)
-    {
-        return Count(Root, level, 0);
-        
-        int Count(BSTNode<TValue>? node, int targetLevel, int currentLevel)
-        {
-            if (node == null)
-                return 0;
-
-            if (currentLevel == targetLevel)
-                return 1;
-
-            return Count(node.Left, targetLevel, currentLevel + 1) +
-                   Count(node.Right, targetLevel, currentLevel + 1);
-        }
-    }
-    
     public List<TValue> PreOrderTraversal()
     {
         List<TValue> temp = new();
-        PreOrderTraversal(Root, temp);
+        PreOrderTraversal(_root, temp);
         return temp;
     }
     
     public void PreOrderTraversal(IList<TValue> list)
     {
         list.Clear();
-        PreOrderTraversal(Root, list);
+        PreOrderTraversal(_root, list);
     }
 
     public void PreOrderTraversal(BSTNode<TValue>? node, IList<TValue> list)
@@ -275,14 +191,14 @@ class BinarySearchTree<TValue> : IEnumerable<TValue> where TValue : IComparable<
     public List<TValue> InOrderTraversal()
     {
         List<TValue> temp = new();
-        InOrderTraversal(Root, temp);
+        InOrderTraversal(_root, temp);
         return temp;
     }
     
     public void InOrderTraversal(IList<TValue> list)
     {
         list.Clear();
-        InOrderTraversal(Root, list);
+        InOrderTraversal(_root, list);
     }
 
     void InOrderTraversal(BSTNode<TValue>? node, IList<TValue> list)
@@ -297,14 +213,14 @@ class BinarySearchTree<TValue> : IEnumerable<TValue> where TValue : IComparable<
     public List<TValue> ReverseInOrderTraversal()
     {
         List<TValue> temp = new();
-        ReverseInOrderTraversal(Root, temp);
+        ReverseInOrderTraversal(_root, temp);
         return temp;
     }
     
     public void ReverseInOrderTraversal(IList<TValue> list)
     {
         list.Clear();
-        ReverseInOrderTraversal(Root, list);
+        ReverseInOrderTraversal(_root, list);
     }
 
     void ReverseInOrderTraversal(BSTNode<TValue>? node, IList<TValue> list)
@@ -319,14 +235,14 @@ class BinarySearchTree<TValue> : IEnumerable<TValue> where TValue : IComparable<
     public List<TValue> PostOrderTraversal()
     {
         List<TValue> temp = new();
-        PostOrderTraversal(Root, temp);
+        PostOrderTraversal(_root, temp);
         return temp;
     }
     
     public void PostOrderTraversal(IList<TValue> list)
     {
         list.Clear();
-        PostOrderTraversal(Root, list);
+        PostOrderTraversal(_root, list);
     }
 
     void PostOrderTraversal(BSTNode<TValue>? node, IList<TValue> list)
@@ -348,10 +264,10 @@ class BinarySearchTree<TValue> : IEnumerable<TValue> where TValue : IComparable<
     void LevelOrderTraversal(IList<TValue> list) //Breadth-first traversal (в ширину)
     {
         list.Clear();
-        if (Root == null) return;
+        if (_root == null) return;
 
         Queue.Queue<BSTNode<TValue>> queue = new();
-        queue.Enqueue(Root);
+        queue.Enqueue(_root);
 
         while (queue.Count > 0)
         {
@@ -368,28 +284,28 @@ class BinarySearchTree<TValue> : IEnumerable<TValue> where TValue : IComparable<
     
     public void Clear()
     {
-        ClearRecursive(Root);
-        Root = null;
+        ClearRecursive(_root);
+        _root = null;
         Count = 0;
-    }
+        
+        void ClearRecursive(BSTNode<TValue>? node)
+        {
+            if (node == null)
+                return;
 
-    void ClearRecursive(BSTNode<TValue>? node)
-    {
-        if (node == null)
-            return;
+            ClearRecursive(node.Left);
+            ClearRecursive(node.Right);
 
-        ClearRecursive(node.Left);
-        ClearRecursive(node.Right);
-
-        node.Left = null;
-        node.Right = null;
+            node.Left = null;
+            node.Right = null;
+        }
     }
     
     public void BalanceTree()
     {
         List<TValue> list = InOrderTraversal();
         Clear();
-        Root = CreateTreeFromList(list, 0, list.Count - 1);
+        _root = CreateTreeFromList(list, 0, list.Count - 1);
         Count += list.Count;
     }
     
@@ -397,9 +313,9 @@ class BinarySearchTree<TValue> : IEnumerable<TValue> where TValue : IComparable<
     {
         BinarySearchTree<TValue> clonedTree = new();
 
-        if (Root != null)
+        if (_root != null)
         {
-            clonedTree.Root = CloneNode(Root);
+            clonedTree._root = CloneNode(_root);
             clonedTree.Count = Count;
         }
 
@@ -418,11 +334,11 @@ class BinarySearchTree<TValue> : IEnumerable<TValue> where TValue : IComparable<
         }
     }
     
-    public IEnumerator<TValue> GetEnumerator() => new BSTIterator<TValue>(Root);
+    public IEnumerator<TValue> GetEnumerator() => new BSTIterator<TValue>(_root);
 
     class BSTIterator<TValue> : IEnumerator<TValue>
     {
-        Stack<BSTNode<TValue>> _stack = new(); //второй способ как стандартный, с очередью
+        Stack<BSTNode<TValue>> _stack = new();
         BSTNode<TValue> _root;
         
         public BSTIterator(BSTNode<TValue> root)
@@ -477,7 +393,7 @@ class BinarySearchTree<TValue> : IEnumerable<TValue> where TValue : IComparable<
     /// </summary>
     void Invert()
     {
-        InvertTree(Root);
+        InvertTree(_root);
         
         void InvertTree(BSTNode<TValue>? node)
         {
@@ -513,18 +429,113 @@ class BinarySearchTree<TValue> : IEnumerable<TValue> where TValue : IComparable<
             return Dfs(root1?.Left, root2?.Right) && Dfs(root1?.Right, root2?.Left);
         }
     }
-    
+
     /// <summary>
     /// Computes the maximum depth (height) of the binary tree.
     /// </summary>
     /// <param name="root"></param>
     /// <returns></returns>
-    int MaxDepth(BSTNode<TValue>? root) {
+    int MaxDepth(BSTNode<TValue>? root) //Height
+    {
         if (root is null) return 0;
 
         int left = MaxDepth(root.Left);
         int right = MaxDepth(root.Right);
         return Math.Max(left, right) + 1;
+    }
+
+    /// <summary>
+    /// Checks if tree is balanced
+    /// </summary>
+    /// <returns></returns>
+    public bool IsBalanced()
+    {
+        return CheckHeight(_root) != -1;
+        
+        int CheckHeight(BSTNode<TValue>? node)
+        {
+            if (node == null)
+                return 0;
+
+            int leftHeight = CheckHeight(node.Left);
+            if (leftHeight == -1) return -1;
+
+            int rightHeight = CheckHeight(node.Right);
+            if (rightHeight == -1) return -1;
+
+            if (Math.Abs(leftHeight - rightHeight) > 1)
+                return -1;
+
+            return Math.Max(leftHeight, rightHeight) + 1;
+        }
+    }
+    
+    /// <summary>
+    /// return count of Nodes with one child
+    /// </summary>
+    /// <returns></returns>
+    public int CountIncompleteNodes()
+    {
+        return Count(_root);
+        
+        int Count(BSTNode<TValue> bstNode)
+        {
+            if (_root is null) 
+                return 0;
+
+            int count = 0;
+
+            if ((_root.Left is null && _root.Right != null) || (_root.Right is null && _root.Left != null))
+            {
+                count++;
+            }
+
+            count += Count(_root.Left);
+            count += Count(_root.Right);
+
+            return count;
+        }
+    }
+    
+    /// <summary>
+    /// return Count of leaves without children
+    /// </summary>
+    /// <returns></returns>
+    public int CountLeaves()
+    {
+        return Count(_root);
+        
+        int Count(BSTNode<TValue>? node)
+        {
+            if (node == null) return 0;
+    
+            if (node.Left == null && node.Right == null)
+                return 1;
+    
+            return Count(node.Left) + Count(node.Right);
+        }
+    }
+    
+    /// <summary>
+    /// return Count of leaves without children at level
+    /// </summary>
+    /// <param name="level"></param>
+    /// <returns></returns>
+    public int CountNodesAtLevel(int level)
+    {
+        return Count(_root, level, 0);
+        
+        int Count(BSTNode<TValue>? node, int targetLevel, int currentLevel)
+        {
+            if (node == null)
+                return 0;
+
+            if (currentLevel == targetLevel)
+                return 1;
+
+            return Count(node.Left, targetLevel, currentLevel + 1) +
+                   Count(node.Right, targetLevel, currentLevel + 1);
+        }
     }
     
     /// <summary>
@@ -564,7 +575,7 @@ class BinarySearchTree<TValue> : IEnumerable<TValue> where TValue : IComparable<
     /// <returns></returns>
     int CountNodes()
     {
-        return Count(Root);
+        return Count(_root);
         //Count overall amount of nodes
         
         int Count(BSTNode<TValue>? node) => node == null ? 0 : 1 + Count(node.Left) + Count(node.Right);
@@ -577,7 +588,7 @@ class BinarySearchTree<TValue> : IEnumerable<TValue> where TValue : IComparable<
     /// <returns></returns>
     BSTNode<TValue>? FindPredecessor(TValue value)
     {
-        return Find(Root, value);
+        return Find(_root, value);
         
         BSTNode<TValue>? Find(BSTNode<TValue>? node, TValue value)
         {
@@ -597,7 +608,7 @@ class BinarySearchTree<TValue> : IEnumerable<TValue> where TValue : IComparable<
     /// <returns></returns>
     BSTNode<TValue>? FindSuccessor(TValue value)
     {
-        return Find(Root, value);
+        return Find(_root, value);
         
         BSTNode<TValue>? Find(BSTNode<TValue>? node, TValue value)
         {

@@ -17,19 +17,6 @@ class Stack<T> : IEnumerable<T>
         Count++;
     }
     
-    public void Reverse()
-    {
-        if (_head is null) return;
-        Node<T>? temp = _head.Next;
-        _head!.Next = null;
-        while (temp != null)
-        {
-            Node<T> next = new (temp.Data) { Next = _head };
-            temp = temp.Next;
-            _head = next;
-        }
-    }
-    
     public T Pop()
     {
         if (IsEmpty) throw new InvalidOperationException("Стек пуст");
