@@ -604,12 +604,12 @@ class SinglyLinkedList<T> : IEnumerable<T>
     /// <param name="l2"></param>
     /// <param name="carry"></param>
     /// <returns></returns>
-    public Node<int>? AddTwoNumbers(Node<int>? l1, Node<int>? l2, int carry = 0)
+    Node<int>? AddTwoNumbers(Node<int>? l1, Node<int>? l2, int carry = 0)
     {
         if (l1 == null && l2 == null && carry == 0)
             return null;
 
-        int total = (l1?.Data ?? 0) + (l2?.Data ?? 0) + carry;
+        var total = (l1?.Data ?? 0) + (l2?.Data ?? 0) + carry;
         carry = total / 10;
         return new(total % 10)
         {
@@ -617,6 +617,137 @@ class SinglyLinkedList<T> : IEnumerable<T>
         };
     }
 
+    /// <summary>
+    /// You are given two non-empty linked lists representing two non-negative integers. The most significant digit comes first and each of their nodes contains a single digit. Add the two numbers and return the sum as a linked list.
+    /// You may assume the two numbers do not contain any leading zero, except the number 0 itself.
+    /// </summary>
+    /// <param name="l1"></param>
+    /// <param name="l2"></param>
+    /// <returns></returns>
+    Node<int>? AddTwoNumbers(Node<int>? l1, Node<int>? l2)
+    {
+        Stack<int> stack1 = [];
+        Stack<int> stack2 = [];
+        while (l1 != null)
+        {
+            stack1.Push(l1.Data);
+            l1 = l1.Next;
+        }
+
+        while (l2 != null)
+        {
+            stack2.Push(l2.Data);
+            l2 = l2.Next;
+        }
+
+        Node<int>? result = null;
+        int carry = 0;
+
+        while (stack1.Count > 0 || stack2.Count > 0 || carry != 0)
+        {
+            var digit1 = stack1.Count > 0 ? stack1.Pop() : 0;
+            var digit2 = stack2.Count > 0 ? stack2.Pop() : 0;
+
+            int sum = digit1 + digit2 + carry;
+            carry = sum / 10;
+
+            var newNode = new Node<int>(sum % 10)
+            {
+                Next = result
+            };
+            
+            result = newNode;
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Given the head of a linked list, return the list after sorting it in ascending order.
+    /// </summary>
+    /// <param name="head"></param>
+    /// <returns></returns>
+    Node<int>? SortList(Node<int>? head)
+    {
+        if (head?.Next == null)
+        {
+            return head;
+        }
+
+        var middle = GetMiddle(head);
+        var nextToMiddle = middle!.Next;
+        middle.Next = null;
+
+        var left = SortList(head);
+        var right = SortList(nextToMiddle);
+
+        var sortedList = SortedMerge(left, right);
+        return sortedList;
+        
+        Node<int>? GetMiddle(Node<int>? head)
+        {
+            if (head == null)
+            {
+                return head;
+            }
+
+            var slow = head;
+            var fast = head;
+
+            while (fast.Next != null && fast.Next.Next != null)
+            {
+                slow = slow!.Next;
+                fast = fast.Next.Next;
+            }
+
+            return slow;
+        }
+
+        Node<int>? SortedMerge(Node<int>? left, Node<int>? right)
+        {
+            if (left is null)
+            {
+                return right;
+            }
+
+            if (right is null)
+            {
+                return left;
+            }
+
+            Node<int> dummy = new();
+            var temp = dummy;
+            
+            while (left != null && right != null)
+            {
+                if (left.Data <= right.Data)
+                {
+                    temp.Next = left;
+                    left = left.Next;
+                }
+                else
+                {
+                    temp.Next = right;
+                    right = right.Next;
+                }
+
+                temp = temp.Next;
+            }
+
+            if (left != null)
+            {
+                temp.Next = left;
+            }
+
+            if (right != null)
+            {
+                temp.Next = right;
+            }
+            
+            return dummy.Next;
+        }
+    }
+    
     #endregion
 }
 

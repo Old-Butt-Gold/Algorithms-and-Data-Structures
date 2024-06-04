@@ -1,4 +1,5 @@
 ﻿using AaDS.DataStructures.Heap;
+using AaDS.shared;
 
 namespace AaDS.Search;
 
@@ -12,19 +13,25 @@ public class FindKthLargest
     /// <param name="nums"></param>
     /// <param name="k"></param>
     /// <returns></returns>
-    public int FindKth(int[] nums, int k) {
+    public int FindKth(int[] nums, int k)
+    {
         BinaryHeap<int> heap = new();
-        for (int i = 0; i < k; i++) {
+        for (int i = 0; i < k; i++)
+        {
             heap.Enqueue(nums[i]);
         }
-        
-        for (int i = k; i < nums.Length; i++) {
-            if (nums[i] > heap.Peek()) {
+
+        for (int i = k; i < nums.Length; i++)
+        {
+            if (nums[i] > heap.Peek())
+            {
                 heap.Dequeue();
                 heap.Enqueue(nums[i]);
             }
         }
-        
+
         return heap.Peek();
     }
+
+    public int FindKthLargestI(int[] nums, int k) => QuickSelect<int>.QuickSel(nums, k, SortDirection.Descending);
 }

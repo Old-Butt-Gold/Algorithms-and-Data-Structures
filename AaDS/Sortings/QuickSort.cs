@@ -14,7 +14,7 @@ static class QuickSort<T> where T : IComparable<T>
 
     static int Partition(IList<T> list, int left, int right)
     {
-        T pivot = list[left];
+        var pivot = list[left];
         int j = left;
 
         for (int i = left + 1; i <= right; i++)
