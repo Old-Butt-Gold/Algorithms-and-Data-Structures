@@ -53,14 +53,9 @@ class SinglyLinkedList<T> : IEnumerable<T>
     public void AddFirst(T data)
     {
         Node<T> node = new(data) { Next = _head };
+        _head = node;
         if (Count == 0)
-        {
-            _head = _tail = node;
-        }
-        else
-        {
-            _head = node;
-        }
+            _tail = _head;
         Count++;
     }
     
@@ -259,15 +254,6 @@ class SinglyLinkedList<T> : IEnumerable<T>
         }
 
         return false;
-    }
-    
-    public void AppendFirst(T data)
-    {
-        Node<T> node = new(data) { Next = _head };
-        _head = node;
-        if (Count == 0)
-            _tail = _head;
-        Count++;
     }
 
     public IEnumerator<T> GetEnumerator()
