@@ -37,4 +37,26 @@ static class BinarySearch<T> where T : IComparable<T>
     {
         return Search(list, left, right, element);
     }
+    
+    public static int BinarySearchInsertIndex(IList<T> array, T element)
+    {
+        int low = 0;
+        int high = array.Count;
+ 
+        while (low < high)
+        {
+            int mid = low + (high - low) / 2;
+ 
+            if (array[mid].CompareTo(element) < 0)
+            {
+                low = mid + 1;
+            }
+            else
+            {
+                high = mid;
+            }
+        }
+ 
+        return low;
+    }
 }

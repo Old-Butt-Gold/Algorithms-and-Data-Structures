@@ -2,6 +2,7 @@
 
 namespace AaDS.DataStructures.Queue;
 
+//CircularQueue
 class ArrayQueue<T> : IEnumerable<T>
 {
     T[] _items;
@@ -42,6 +43,10 @@ class ArrayQueue<T> : IEnumerable<T>
         _items[_front] = default;
         _front = (_front + 1) % _items.Length;
         Count--;
+        
+        if (Count > InitialCapacity && Count == _items.Length / 4)
+            Resize(_items.Length / 2);
+        
         return item;
     }
 

@@ -75,9 +75,9 @@ class Trie
         var current = _root;
         foreach (char c in prefix)
         {
-            if (current.Children.TryGetValue(c, out _))
+            if (current.Children.TryGetValue(c, out var child))
             {
-                current = current.Children[c];
+                current = child;
             }
             else
             {
@@ -86,7 +86,30 @@ class Trie
         }
         return current;
     }
-    
+
+    public string ContainsPart(string word)
+    {
+        var current = _root;
+        for (int i = 0; i < word.Length; i++)
+        {
+            if (current.Children.TryGetValue(word[i], out var child))
+            {
+                if (child.IsEndOfWord)
+                {
+                    return word.Substring(0, i + 1);
+                }
+
+                current = child;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        return word;
+    }
+
     /// <summary>
     /// Determines whether the trie contains the specified word.
     /// </summary>
