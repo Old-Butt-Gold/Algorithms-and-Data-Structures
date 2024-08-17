@@ -4,10 +4,7 @@ namespace AaDS.Search;
 
 static class BinarySearch<T> where T : IComparable<T>
 {
-    public static int Search(IList<T> list, T element)
-    {
-        return Search(list, 0, list.Count - 1, element);
-    }
+    public static int Search(IList<T> list, T element) => Search(list, 0, list.Count - 1, element);
 
     static int Search(IList<T> list, int left, int right, T element)
     {

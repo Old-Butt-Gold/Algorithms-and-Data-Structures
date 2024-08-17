@@ -1,6 +1,4 @@
-﻿using AaDS.Search;
-
-namespace AaDS.Arrays;
+﻿namespace AaDS.Search;
 
 public static class SearchInRotatedSortedArray
 {

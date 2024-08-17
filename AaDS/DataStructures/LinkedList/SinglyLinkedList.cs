@@ -5,43 +5,47 @@ namespace AaDS.DataStructures.LinkedList;
 
 class SinglyLinkedList<T> : IEnumerable<T>
 {
-    Node<T>? _head; 
-    Node<T>? _tail; 
+    Node<T>? _head;
+    Node<T>? _tail;
     public int Count { get; private set; }
 
-    public SinglyLinkedList() { }
+    public SinglyLinkedList()
+    {
+    }
+
     public SinglyLinkedList(T data) => AddLast(data);
+
     public SinglyLinkedList(params IEnumerable<T>[] collections)
     {
         foreach (IEnumerable<T> collection in collections)
-            foreach (T item in collection)
-                AddLast(item);
+        foreach (T item in collection)
+            AddLast(item);
     }
-    
+
     public void Reverse()
     {
         if (_head == null) return;
-        
+
         Node<T>? prev = null;
         var current = _head;
 
         _tail = _head;
-        
+
         while (current != null)
         {
             var next = current.Next;
             current.Next = prev;
-            prev = current; 
+            prev = current;
             current = next;
         }
-        
+
         _head = prev;
     }
 
     public void AddLast(T data)
     {
         Node<T> node = new(data);
-        
+
         if (_head == null)
             _head = node;
         else
@@ -58,12 +62,12 @@ class SinglyLinkedList<T> : IEnumerable<T>
             _tail = _head;
         Count++;
     }
-    
+
     public bool Remove(T data)
     {
         Node<T>? current = _head;
         Node<T>? previous = null;
- 
+
         while (current != null)
         {
             if (EqualityComparer<T>.Default.Equals(data, current.Data))
@@ -78,15 +82,18 @@ class SinglyLinkedList<T> : IEnumerable<T>
                     _head = _head?.Next;
                     if (_head == null) _tail = null;
                 }
+
                 Count--;
                 return true;
             }
+
             previous = current;
             current = current.Next;
         }
+
         return false;
     }
-    
+
     public void DeleteFirst()
     {
         if (_head != null)
@@ -115,13 +122,14 @@ class SinglyLinkedList<T> : IEnumerable<T>
             current!.Next = null;
             _tail = current;
         }
+
         Count--;
     }
-    
+
     public bool IsEmpty => Count == 0;
 
     public void Clear() => (_head, _tail, Count) = (null, null, 0);
-    
+
     public bool Contains(T data)
     {
         Node<T>? current = _head;
@@ -130,6 +138,7 @@ class SinglyLinkedList<T> : IEnumerable<T>
             if (EqualityComparer<T>.Default.Equals(data, current.Data)) return true;
             current = current.Next;
         }
+
         return false;
     }
 
@@ -147,7 +156,7 @@ class SinglyLinkedList<T> : IEnumerable<T>
 
         return null;
     }
-    
+
     public bool AddBefore(T existingData, T newData)
     {
         Node<T>? current = _head;
@@ -265,7 +274,7 @@ class SinglyLinkedList<T> : IEnumerable<T>
             current = current.Next;
         }
     }
-    
+
     public T[] ToArray()
     {
         T[] array = new T[Count];
@@ -276,9 +285,9 @@ class SinglyLinkedList<T> : IEnumerable<T>
 
         return array;
     }
-    
+
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-    
+
     #region OtherAlgos
 
     Node<T> MergeTwoSortedLists(Node<T> list1, Node<T> list2)
@@ -315,11 +324,11 @@ class SinglyLinkedList<T> : IEnumerable<T>
     /// <returns></returns>
     Node<T>? MergeKListsQueue(Node<T>?[]? lists)
     {
-        if(lists == null || lists.Length == 0)
+        if (lists == null || lists.Length == 0)
             return null;
-        if (lists.Length == 1) 
+        if (lists.Length == 1)
             return lists[0];
-        
+
         PriorityQueue<Node<T>, T> result = new();
         foreach (var list in lists)
         {
@@ -376,32 +385,41 @@ class SinglyLinkedList<T> : IEnumerable<T>
         return lists[0];
     }
 
-    bool HasCycle(Node<T> head) {
+    bool HasCycle(Node<T> head)
+    {
         var slow = head;
         var fast = head;
-        while (slow != null && fast != null) {
+        while (slow != null && fast != null)
+        {
             slow = slow.Next;
-            
+
             fast = fast.Next;
-            if (fast != null) {
+            if (fast != null)
+            {
                 fast = fast.Next;
-            } else {
+            }
+            else
+            {
                 return false;
             }
 
             if (slow == fast) return true;
         }
+
         return false;
     }
-    
-    Node<T>? RotateRight(Node<T> head, int k) {
-        if (head?.Next == null || k == 0) {
+
+    Node<T>? RotateRight(Node<T> head, int k)
+    {
+        if (head?.Next == null || k == 0)
+        {
             return head;
         }
 
         var tail = head;
         int count = 1;
-        while (tail.Next != null) {
+        while (tail.Next != null)
+        {
             tail = tail.Next;
             count++;
         }
@@ -410,29 +428,34 @@ class SinglyLinkedList<T> : IEnumerable<T>
         if (k is 0) return head;
         tail.Next = head;
 
-        for (int i = 0; i < count - k; i++) {
+        for (int i = 0; i < count - k; i++)
+        {
             head = head.Next!;
             tail = tail!.Next;
-        }    
+        }
 
         tail!.Next = null;
 
         return head;
     }
-    
-    Node<T>? RemoveNthFromEnd(Node<T>? head, int n) {
+
+    Node<T>? RemoveNthFromEnd(Node<T>? head, int n)
+    {
         var slow = head;
         var fast = head;
 
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < n; i++)
+        {
             fast = fast?.Next;
         }
 
-        if (fast == null) {
+        if (fast == null)
+        {
             return head?.Next;
         }
 
-        while (fast.Next != null) {
+        while (fast.Next != null)
+        {
             slow = slow?.Next;
             fast = fast.Next;
         }
@@ -441,7 +464,7 @@ class SinglyLinkedList<T> : IEnumerable<T>
 
         return head;
     }
-    
+
     Node<T> DeleteDuplicates(Node<T> head) //only in sorted
     {
         if (head is null) return head;
@@ -471,13 +494,15 @@ class SinglyLinkedList<T> : IEnumerable<T>
 
         return sentinel.Next;
     }
-    
-    class NodeWithRandom {
+
+    class NodeWithRandom
+    {
         public int val;
         public NodeWithRandom next;
         public NodeWithRandom random;
-    
-        public NodeWithRandom(int _val) {
+
+        public NodeWithRandom(int _val)
+        {
             val = _val;
             next = null;
             random = null;
@@ -548,7 +573,7 @@ class SinglyLinkedList<T> : IEnumerable<T>
         beforeCurr.Next = after.Next;
         return before.Next;
     }
-    
+
     /// <summary>
     /// Given the head of a singly linked list and two integers left and right where left <= right,
     /// reverse the nodes of the list from position left to position right, and return the reversed list.
@@ -557,7 +582,8 @@ class SinglyLinkedList<T> : IEnumerable<T>
     /// <param name="left"></param>
     /// <param name="right"></param>
     /// <returns></returns>
-    public Node<int>? ReverseBetween(Node<int>? head, int left, int right) {
+    Node<int>? ReverseBetween(Node<int>? head, int left, int right)
+    {
         if (head is null || left == right) return head;
 
         Node<int> dummy = new()
@@ -566,19 +592,21 @@ class SinglyLinkedList<T> : IEnumerable<T>
         };
         var prev = dummy;
 
-        for (int i = 0; i < left - 1; i++) {
+        for (int i = 0; i < left - 1; i++)
+        {
             prev = prev.Next;
         }
 
         var current = prev.Next;
 
-        for (int i = 0; i < right - left; i++) {
+        for (int i = 0; i < right - left; i++)
+        {
             var nextNode = current.Next;
             current.Next = nextNode.Next;
             nextNode.Next = prev.Next;
             prev.Next = nextNode;
         }
-        
+
         return dummy.Next;
     }
 
@@ -641,7 +669,7 @@ class SinglyLinkedList<T> : IEnumerable<T>
             {
                 Next = result
             };
-            
+
             result = newNode;
         }
 
@@ -669,7 +697,7 @@ class SinglyLinkedList<T> : IEnumerable<T>
 
         var sortedList = SortedMerge(left, right);
         return sortedList;
-        
+
         Node<int>? GetMiddle(Node<int>? head)
         {
             if (head == null)
@@ -703,7 +731,7 @@ class SinglyLinkedList<T> : IEnumerable<T>
 
             Node<int> dummy = new();
             var temp = dummy;
-            
+
             while (left != null && right != null)
             {
                 if (left.Data <= right.Data)
@@ -720,20 +748,54 @@ class SinglyLinkedList<T> : IEnumerable<T>
                 temp = temp.Next;
             }
 
-            if (left != null)
-            {
-                temp.Next = left;
-            }
+            temp.Next = left != null ? left : right;
 
-            if (right != null)
-            {
-                temp.Next = right;
-            }
-            
             return dummy.Next;
         }
     }
-    
+
+    /// <summary>
+    /// Given the head of a linked list, reverse the nodes of the list k at a time, and return the modified list.
+    /// <para>
+    /// k is a positive integer and is less than or equal to the length of the linked list. If the number of nodes is not a multiple of k then left-out nodes, in the end, should remain as it is.
+    /// </para>
+    /// <para>
+    /// You may not alter the values in the list's nodes, only nodes themselves may be changed.
+    /// </para>
+    /// </summary>
+    /// <param name="head"></param>
+    /// <param name="k"></param>
+    /// <returns></returns>
+    public Node<int>? ReverseKGroup(Node<int>? head, int k)
+    {
+        var current = head;
+        int count = 0;
+        //find the k + 1 node
+        while (current != null && count != k)
+        {
+            current = current.Next;
+            count++;
+        }
+
+        if (count == k)
+        {
+            current = ReverseKGroup(current, k); //reverse list with k + 1 node as head
+
+
+            while (count-- > 0)
+            {
+                var tmp = head!.Next;
+                head.Next = current;
+                current = head;
+                head = tmp;
+            }
+
+            head = current;
+        }
+
+        return head;
+    }
+
     #endregion
 }
 
