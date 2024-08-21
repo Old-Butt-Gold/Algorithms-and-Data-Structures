@@ -1,5 +1,1 @@
-﻿using AaDS.String;
-
-Console.WriteLine();
-
-ReverseVowels.ReverseVowelsStr("Hello");
+﻿Console.WriteLine();
