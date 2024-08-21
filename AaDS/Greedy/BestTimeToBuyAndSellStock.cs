@@ -1,6 +1,6 @@
-﻿namespace AaDS.DynamicProgramming._1DP;
+﻿namespace AaDS.Greedy;
 
-public static class BestTimeToBuyAndSellStock
+public partial class BestTimeToBuyAndSellStock
 {
     /// <summary>
     /// You are given an array prices where prices[i] is the price of a given stock on the ith day.
