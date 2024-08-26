@@ -15,28 +15,22 @@ public static class LemonadeChange
 
         foreach (var bill in bills)
         {
-            if (bill == 5)
+            switch (bill)
             {
-                five++;
-            }
-
-            if (bill == 10)
-            {
-                five--;
-                ten++;
-            }
-
-            if (bill == 20)
-            {
-                if (ten > 0)
-                {
+                case 5:
+                    five++;
+                    break;
+                case 10:
+                    five--;
+                    ten++;
+                    break;
+                case 20 when ten > 0:
                     five--;
                     ten--;
-                }
-                else
-                {
+                    break;
+                case 20:
                     five -= 3;
-                }
+                    break;
             }
 
             if (five < 0)

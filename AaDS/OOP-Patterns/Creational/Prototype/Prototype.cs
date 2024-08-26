@@ -16,7 +16,7 @@
 
 public class Client
 {
-    public static void Main()
+    public static void Test()
     {
         Circle shape = new Circle();
         var newShape = shape.Clone();
