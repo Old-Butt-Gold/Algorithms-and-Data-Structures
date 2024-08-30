@@ -12,20 +12,23 @@ public class BoyerMoore<T> where T : IComparable<T>
 
     static T FindMajorityCandidate(IEnumerable<T> input)
     {
-        var count = 1;
-        var candidate = input.First();
+        T candidate = default!;
+        int count = 0;
 
-        foreach (var element in input.Skip(1)) //перебор со 2 элемента
+        foreach (var element in input)
         {
-            if (candidate.Equals(element))
-                count++;
-            else
-                count--;
-
             if (count == 0)
             {
                 candidate = element;
                 count = 1;
+            }
+            else if (candidate!.Equals(element))
+            {
+                count++;
+            }
+            else
+            {
+                count--;
             }
         }
 
