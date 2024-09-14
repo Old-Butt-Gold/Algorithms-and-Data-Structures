@@ -49,6 +49,8 @@ static class RadixSort
                     int bucketIndex = (array[i] / exponent % 10) + 9;
                     output[--count[bucketIndex]] = array[i];
                 }
+                
+                Array.Reverse(output);
             }
 
             for (int i = 0; i < array.Count; i++)
@@ -104,6 +106,8 @@ static class RadixSort
                     int bucketIndex = digit < array[i].Length ? array[i][digit] : 0;
                     output[--count[bucketIndex]] = array[i];
                 }
+                
+                Array.Reverse(output);
             }
 
             for (int i = 0; i < array.Count; i++)
