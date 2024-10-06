@@ -1,4 +1,6 @@
-﻿public class LruCache<TK, TV>
+﻿namespace AaDS.DataStructures.Cache;
+
+public class LruCache<TK, TV>
 {
     private readonly int _capacity;
     private readonly Dictionary<TK, LinkedListNode<KeyValuePair<TK, TV>>> _cacheMap = [];

@@ -182,7 +182,8 @@ class RPN
                         result = second * first;
                         break;
                     case '/':
-                        if (first == 0)
+                        const double eps = 1e-9;
+                        if (Math.Abs(first) < eps)
                         {
                             throw new DivideByZeroException("Division by zero");
                         }

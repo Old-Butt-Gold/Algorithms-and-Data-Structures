@@ -4,20 +4,21 @@ static class Brain
 {
 	public static void Play()
 	{
-		(char Letter, string CodeWord)[] array = new[]
-		{
+		(char Letter, string CodeWord)[] array =
+		[
 			('A', "Alpha"), ('B', "Bravo"), ('C', "Charlie"), ('D', "Delta"),
 			('E', "Echo"), ('F', "Foxtrot"), ('G', "Golf"), ('H', "Hotel"),
 			('I', "India"), ('J', "Juliett"), ('K', "Kilo"), ('L', "Lima"),
 			('M', "Mike"), ('N', "November"), ('O', "Oscar"), ('P', "Papa"),
 			('Q', "Quebec"), ('R', "Romeo"), ('S', "Sierra"), ('T', "Tango"),
 			('U', "Uniform"), ('V', "Victor"), ('W', "Whiskey"), ('X', "X-ray"),
-			('Y', "Yankee"), ('Z', "Zulu"),
-		};
+			('Y', "Yankee"), ('Z', "Zulu")
+		];
+		
+		bool returnToMainMenu;
+		bool isExit = false;
 
-		bool returnToMainMenu = false;
-
-		while (true)
+		while (!isExit)
 		{
 			Console.Clear();
 			Info();
@@ -53,6 +54,7 @@ static class Brain
 				if (key is ConsoleKey.Escape)
 				{
 					returnToMainMenu = true;
+					isExit = true;
 					Console.Clear();
 					Console.WriteLine("Flash Cards was closed.");
 					return;

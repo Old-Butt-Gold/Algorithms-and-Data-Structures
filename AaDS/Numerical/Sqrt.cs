@@ -8,7 +8,7 @@ public static class Sqrt
         //метод Ньютона
 
         double precision = 1e-6; // Точность
-        double guess = x / 2; // Начальное предположение
+        double guess = x / 2.0; // Начальное предположение
 
         while (Math.Abs(guess * guess - x) > precision) {
             guess = 0.5 * (guess + x / guess); // Обновление предположения

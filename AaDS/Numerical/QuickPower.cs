@@ -10,8 +10,10 @@ static class QuickPower
 
         if (power == 0)
             return 1;
+
+        const double eps = 1e-9;
         
-        if (num == 0)
+        if (Math.Abs(num) < eps)
             return 0;
 
         if (power == int.MinValue) { //overflow handling

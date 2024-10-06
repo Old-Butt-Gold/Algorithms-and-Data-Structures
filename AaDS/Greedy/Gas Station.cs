@@ -31,6 +31,6 @@ public static class Gas_Station
             }
         }
 
-        return tank > -1 ? start : -1;
+        return start;
     }
 }

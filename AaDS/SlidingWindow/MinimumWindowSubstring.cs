@@ -11,7 +11,7 @@ public class MinimumWindowSubstring
     /// <returns></returns>
     public static string MinWindow(string s, string t)
     {
-        if (s.Length < t.Length) return "";
+        if (string.IsNullOrEmpty(s) || string.IsNullOrEmpty(t) || s.Length < t.Length) return "";
 
         int[] map = new int[128];
         int count = t.Length;
@@ -19,6 +19,8 @@ public class MinimumWindowSubstring
         int end = 0;
         int minLen = int.MaxValue;
         int startIndex = 0;
+
+        bool wasMinLenChanged = false;
 
         foreach (var c in t)
         {
@@ -40,6 +42,7 @@ public class MinimumWindowSubstring
                 {
                     startIndex = start;
                     minLen = end - start;
+                    wasMinLenChanged = true;
                 }
 
                 if (map[s[start++]]++ == 0)
@@ -49,6 +52,6 @@ public class MinimumWindowSubstring
             }
         }
 
-        return minLen == int.MaxValue ? "" : s.Substring(startIndex, minLen);
+        return !wasMinLenChanged ? "" : s.Substring(startIndex, minLen);
     }
 }
