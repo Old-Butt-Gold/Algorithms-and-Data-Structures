@@ -13,45 +13,40 @@ public class MinimumWindowSubstring
     {
         if (string.IsNullOrEmpty(s) || string.IsNullOrEmpty(t) || s.Length < t.Length) return "";
 
-        int[] map = new int[128];
-        int count = t.Length;
-        int start = 0;
-        int end = 0;
+        int[] targetCount = new int[128]; // Assuming ASCII characters
+
+        foreach (char c in t)
+        {
+            targetCount[c]++;
+        }
+
+        int left = 0, right = 0;
         int minLen = int.MaxValue;
-        int startIndex = 0;
+        int minStart = 0;
+        int requiredChars = t.Length;
 
-        bool wasMinLenChanged = false;
-
-        foreach (var c in t)
+        while (right < s.Length)
         {
-            map[c]++;
-        }
-
-        while (end < s.Length)
-        {
-            map[s[end]]--;
-
-            if (map[s[end]] >= 0)
+            if (targetCount[s[right++]]-- > 0)
             {
-                count--;
+                requiredChars--;
             }
 
-            while (count <= 0)
+            while (requiredChars == 0)
             {
-                if (end - start < minLen)
+                if (right - left < minLen)
                 {
-                    startIndex = start;
-                    minLen = end - start;
-                    wasMinLenChanged = true;
+                    minLen = right - left;
+                    minStart = left;
                 }
 
-                if (map[s[start++]]++ == 0)
+                if (targetCount[s[left++]]++ == 0)
                 {
-                    count++;
+                    requiredChars++;
                 }
             }
         }
 
-        return !wasMinLenChanged ? "" : s.Substring(startIndex, minLen);
+        return (minLen == int.MaxValue) ? "" : s.Substring(minStart, minLen);
     }
 }
