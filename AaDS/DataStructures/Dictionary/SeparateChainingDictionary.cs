@@ -9,7 +9,7 @@ public class SeparateChainingDictionary<TKey, TValue> : IDictionary<TKey, TValue
         public TKey Key;
         public TValue Data;
         public Node<TKey, TValue>? Next;
-        public Node<TKey, TValue>? After, Previous;
+        public Node<TKey, TValue>? After, Previous; //Used for iterating on items in order of adding them
         public Node(TKey key, TValue data) => (Key, Data) = (key, data);
     }
 

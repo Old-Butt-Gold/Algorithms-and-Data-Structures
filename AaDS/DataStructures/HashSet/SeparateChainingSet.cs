@@ -10,7 +10,6 @@ public class SeparateChainingSet<T> : ISet<T>
         public Node<T>? Next;
         public Node<T>? After, Previous; 
         //Используются для вывода элементов в порядке их забрасывания во множество
-
         public Node(T data) => Data = data;
     }
 

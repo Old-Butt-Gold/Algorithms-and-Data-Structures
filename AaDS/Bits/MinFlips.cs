@@ -1,0 +1,21 @@
+﻿namespace AaDS.Bits;
+
+public static class MinFlips
+{
+    /// <summary>
+    /// Given 3 positives numbers a, b and c. Return the minimum flips required in some bits of a and b to make ( a OR b == c ). (bitwise OR operation).
+    /// Flip operation consists of change any single bit 1 to 0 or change the bit 0 to 1 in their binary representation.
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <param name="c"></param>
+    /// <returns></returns>
+    public static int MinFlipsOr(int a, int b, int c) {
+        int or = a | b;
+        int xor = c ^ or;
+        int flips = KernighanAlgorithm.BitCount(xor);
+        int dblcount = xor & a & b;
+        flips += KernighanAlgorithm.BitCount(dblcount);
+        return flips;
+    }
+}

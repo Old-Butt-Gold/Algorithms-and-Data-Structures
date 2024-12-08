@@ -181,6 +181,29 @@ class Trie
     /// <param name="prefix">The prefix to search for.</param>
     /// <returns>A list of words that have the specified prefix.</returns>
     /// <exception cref="ArgumentNullException">Thrown when the input prefix is null.</exception>
+    public List<string> GetWordsWithPrefix(string prefix, int count)
+    {
+        if (prefix == null)
+        {
+            throw new ArgumentNullException(nameof(prefix));
+        }
+
+        if (count <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(count), "maxCount must be greater than 0.");
+        }
+
+        List<string> words = [];
+        var prefixNode = SearchNode(prefix);
+
+        if (prefixNode != null)
+        {
+            GetAllWordsFromNodeCount(prefixNode, new StringBuilder(prefix), words, count);
+        }
+
+        return words;
+    }
+    
     public List<string> GetWordsWithPrefix(string prefix)
     {
         if (prefix == null)
@@ -213,11 +236,40 @@ class Trie
             currentWord.Length--;
         }
     }
+    
+    void GetAllWordsFromNodeCount(TrieNode node, StringBuilder currentWord, List<string> wordValuePairs, int count)
+    {
+        if (wordValuePairs.Count >= count) return;
+        
+        if (node.IsEndOfWord)
+        {
+            wordValuePairs.Add(currentWord.ToString());
+        }
+
+        foreach (var kvp in node.Children)
+        {
+            currentWord.Append(kvp.Key);
+            GetAllWordsFromNodeCount(kvp.Value, currentWord, wordValuePairs, count);
+            currentWord.Length--;
+        }
+    }
 
     public List<string> GetWordsWithValues()
     {
         List<string> wordValuePairs = [];
         GetAllWordsFromNode(_root, new StringBuilder(), wordValuePairs);
+        return wordValuePairs;
+    }
+    
+    public List<string> GetWordsWithValues(int count)
+    {
+        if (count <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(count), "maxCount must be greater than 0.");
+        }
+        
+        List<string> wordValuePairs = [];
+        GetAllWordsFromNodeCount(_root, new StringBuilder(), wordValuePairs, count);
         return wordValuePairs;
     }
     

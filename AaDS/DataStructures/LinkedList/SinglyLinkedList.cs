@@ -677,6 +677,139 @@ class SinglyLinkedList<T> : IEnumerable<T>
     }
 
     /// <summary>
+    /// Given the head of a singly linked list, group all the nodes with odd indices together followed by the nodes with even indices, and return the reordered list.
+    /// The first node is considered odd, and the second node is even, and so on.
+    /// </summary>
+    /// <param name="head"></param>
+    /// <returns></returns>
+    public Node<int>? OddEvenList(Node<int>? head)
+    {
+        if (head?.Next == null) return head;
+        Node<int>? odd = new(0);
+        Node<int>? even = new(0);
+        var oddTemp = odd;
+        var evenTemp = even;
+
+        int counter = 1;
+
+        while (head != null)
+        {
+            if (counter % 2 == 0)
+            {
+                evenTemp.Next = head;
+                evenTemp = evenTemp.Next;
+            }
+            else
+            {
+                oddTemp.Next = head;
+                oddTemp = oddTemp.Next;
+            }
+
+            head = head.Next;
+            counter++;
+        }
+
+        evenTemp.Next = null;
+        oddTemp.Next = even.Next;
+        return odd.Next;
+
+    }
+
+    /// <summary>
+    /// https://leetcode.com/problems/maximum-twin-sum-of-a-linked-list/description/?envType=study-plan-v2
+    /// </summary>
+    /// <param name="head"></param>
+    /// <returns></returns>
+    public int PairSum(Node<int>? head)
+    {
+        var slow = GetMiddle(head);
+        int maxVal = 0;
+
+        Node<int>? nextNode, prev = null, secondHalf = slow;
+        while (slow != null) {
+            nextNode = slow.Next;
+            slow.Next = prev;
+            prev = slow;
+            slow = nextNode;
+        }
+
+        var temp = head;
+        var reversed = prev;
+
+        while (reversed != null)
+        {
+            maxVal = Math.Max(maxVal, temp!.Data + reversed.Data);
+            temp = temp.Next;
+            reversed = reversed.Next;
+        }
+
+        Node<int>? restorePrev = null;
+        while (prev != null)
+        {
+            nextNode = prev.Next;
+            prev.Next = restorePrev;
+            restorePrev = prev;
+            prev = nextNode;
+        }
+
+        return maxVal;
+    }
+
+    /// <summary>
+    /// You are given the head of a linked list. Delete the middle node, and return the head of the modified linked list.
+    /// The middle node of a linked list of size n is the ⌊n / 2⌋th node from the start using 0-based indexing, where ⌊x⌋ denotes the largest integer less than or equal to x.
+    /// For n = 1, 2, 3, 4, and 5, the middle nodes are 0, 1, 1, 2, and 2, respectively.
+    /// </summary>
+    /// <param name="head"></param>
+    /// <returns></returns>
+    Node<int>? DeleteMiddle(Node<int>? head)
+    {
+        if (head == null || head.Next == null)
+        {
+            return null;
+        }
+
+        var slow = head;
+        var fast = head;
+        var prev = head;
+
+        while (fast != null && fast.Next != null)
+        {
+            prev = slow;
+            slow = slow!.Next;
+            fast = fast.Next.Next;
+        }
+
+        prev.Next = slow.Next;
+
+        return head;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="head"></param>
+    /// <returns>Returns middle of the Linked List</returns>
+    Node<int>? GetMiddle(Node<int>? head)
+    {
+        if (head == null)
+        {
+            return head;
+        }
+
+        var slow = head;
+        var fast = head;
+
+        while (fast != null && fast.Next != null)
+        {
+            slow = slow!.Next;
+            fast = fast.Next.Next;
+        }
+
+        return slow;
+    }
+
+    /// <summary>
     /// Given the head of a linked list, return the list after sorting it in ascending order.
     /// </summary>
     /// <param name="head"></param>
@@ -688,7 +821,7 @@ class SinglyLinkedList<T> : IEnumerable<T>
             return head;
         }
 
-        var middle = GetMiddle(head);
+        var middle = Middle(head);
         var nextToMiddle = middle!.Next;
         middle.Next = null;
 
@@ -697,8 +830,8 @@ class SinglyLinkedList<T> : IEnumerable<T>
 
         var sortedList = SortedMerge(left, right);
         return sortedList;
-
-        Node<int>? GetMiddle(Node<int>? head)
+        
+        Node<int>? Middle(Node<int>? head)
         {
             if (head == null)
             {
@@ -780,8 +913,6 @@ class SinglyLinkedList<T> : IEnumerable<T>
         if (count == k)
         {
             current = ReverseKGroup(current, k); //reverse list with k + 1 node as head
-
-
             while (count-- > 0)
             {
                 var tmp = head!.Next;
@@ -798,4 +929,3 @@ class SinglyLinkedList<T> : IEnumerable<T>
 
     #endregion
 }
-
