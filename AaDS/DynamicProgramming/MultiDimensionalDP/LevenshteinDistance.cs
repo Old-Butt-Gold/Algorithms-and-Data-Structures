@@ -1,4 +1,4 @@
-﻿namespace AaDS.String;
+﻿namespace AaDS.DynamicProgramming.MultiDimensionalDP;
 
 class LevenshteinDistance
 {
@@ -13,7 +13,7 @@ class LevenshteinDistance
 
         int Distance(int i, int j)
         {
-            Console.WriteLine(i + ":" + j);
+            Console.WriteLine($"{i}:{j}");
             if (i is 0) return j;
             if (j is 0) return i;
 

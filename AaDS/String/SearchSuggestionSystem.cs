@@ -10,7 +10,9 @@ public static class SearchSuggestionSystem
         StringBuilder sb = new();
         Trie trie = new();
         
-        foreach (var product in products.OrderBy(x => x))
+        Array.Sort(products);
+        
+        foreach (var product in products)
         {
             trie.Add(product);
         }

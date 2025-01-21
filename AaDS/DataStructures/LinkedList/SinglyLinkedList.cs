@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using AaDS.DataStructures.Shared;
+using AaDS.Numerical;
 
 namespace AaDS.DataStructures.LinkedList;
 
@@ -922,6 +923,51 @@ class SinglyLinkedList<T> : IEnumerable<T>
             }
 
             head = current;
+        }
+
+        return head;
+    }
+    
+    /// <summary>
+    /// Given the head of a linked list head, in which each node contains an integer value.
+    /// Between every pair of adjacent nodes, insert a new node with a value equal to the greatest common divisor of them.
+    /// </summary>
+    /// <param name="head"></param>
+    /// <returns>the linked list after insertion.</returns>
+    public Node<int>? InsertGreatestCommonDivisors(Node<int>? head) {
+        var current = head;
+
+        while (current != null && current.Next != null) {
+            current.Next = new(Eucledian.FindGcd(current.Data, current.Next.Data), current.Next);
+
+            current = current.Next.Next;
+        }
+
+        return head;
+    }
+
+    /// <summary>
+    /// Given the head of a sorted linked list, delete all duplicates such that each element appears only once. 
+    /// </summary>
+    /// <param name="head"></param>
+    /// <returns>the linked list sorted as well</returns>
+    public Node<int>? DeleteDuplicates(Node<int>? head)
+    {
+        if (head is null) return head;
+
+        var current = head;
+
+        while (current.Next != null)
+        {
+            if (current.Data == current.Next.Data)
+            {
+                current.Next = current.Next.Next;
+            }
+            else
+            {
+                current = current.Next;
+            }
+
         }
 
         return head;

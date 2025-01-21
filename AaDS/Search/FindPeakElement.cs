@@ -12,13 +12,12 @@ public class FindPeakElement
     /// <returns></returns>
     public static int FindPeak(int[] nums)
     {
-
         int left = 0;
         int right = nums.Length - 1;
 
         while (left != right)
         {
-            int mid = (left + right) / 2;
+            int mid = left + (right - left) / 2;
 
             if (nums[mid] < nums[mid + 1])
             {

@@ -10,16 +10,20 @@ public class ThreeSum
     /// <returns></returns>
     public static IList<IList<int>> Sum3(int[] nums)
     {
-        List<IList<int>> result = [];
-        if (nums.Length < 3) return result;
+        var result = new List<IList<int>>();
         Array.Sort(nums);
-        int i = 0;
-        while (i < nums.Length)
+        for (int i = 0; i < nums.Length; i++)
         {
-            int target = -nums[i];
+            if (i > 0 && nums[i] == nums[i - 1])
+            {
+                continue;
+            }
+
             //There is two Sum problem below
             int left = i + 1;
             int right = nums.Length - 1;
+            int target = -nums[i];
+
             while (left < right)
             {
                 if (nums[left] + nums[right] > target)
@@ -32,24 +36,15 @@ public class ThreeSum
                 }
                 else
                 {
-                    List<int> current = [nums[i], nums[left], nums[right]];
-                    result.Add(current);
-                    while (left < right && nums[left] == current[1])
+                    result.Add([nums[i], nums[left], nums[right]]);
+                    
+                    // move left pointer, skipping duplicates
+                    left++;
+                    while (left < right && nums[left] == nums[left - 1])
                     {
                         left++;
                     }
-
-                    while (left < right && nums[right] == current[2])
-                    {
-                        right--;
-                    }
                 }
-            }
-
-            int currentNumbers = nums[i];
-            while (i < nums.Length && nums[i] == currentNumbers)
-            {
-                i++;
             }
         }
 

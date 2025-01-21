@@ -17,7 +17,7 @@ public class FindMinRotatedSortedArray
 
         while (left < right)
         {
-            int mid = (right + left) / 2;
+            int mid = left + (right - left) / 2; // to avoid overflow of int
 
             if (nums[mid] < nums[right])
             {

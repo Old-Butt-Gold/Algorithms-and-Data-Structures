@@ -5,7 +5,8 @@ namespace AaDS.Intervals;
 public class MergeIntervals
 {
     /// <summary>
-    /// Given an array of intervals where intervals[i] = [starti, endi], merge all overlapping intervals, and return an array of the non-overlapping intervals that cover all the intervals in the input.
+    /// Given an array of intervals where intervals[i] = [starti, endi], merge all overlapping intervals,
+    /// and return an array of the non-overlapping intervals that cover all the intervals in the input.
     /// </summary>
     /// <param name="intervals"></param>
     /// <returns></returns>
@@ -13,25 +14,23 @@ public class MergeIntervals
     {
         if (intervals.Length < 2) return intervals;
 
-        Array.Sort(intervals, (a, b) => a[0].CompareTo(b[0]));
+        Array.Sort(intervals, (a, b) => a[0] - b[0]);
+        LinkedList<int[]> merged = [];
 
-        List<int[]> output = [intervals[0]];
-
-        for (int i = 1; i < intervals.Length; i++)
+        foreach (var interval in intervals)
         {
-            if (output[^1][1] >= intervals[i][0])
+            // if the list of merged intervals is empty or if the current interval does not overlap with the previous, append it
+            if (merged.Count == 0 || merged.Last!.Value[1] < interval[0])
             {
-                if (output[^1][1] <= intervals[i][1])
-                {
-                    output[^1][1] = intervals[i][1];
-                }
+                merged.AddLast(interval);
             }
+            // otherwise, there is overlap, so we merge the current and previous intervals
             else
             {
-                output.Add(intervals[i]);
+                merged.Last.Value[1] = Math.Max(merged.Last.Value[1], interval[1]);
             }
         }
 
-        return output.ToArray();
+        return merged.ToArray();
     }
 }

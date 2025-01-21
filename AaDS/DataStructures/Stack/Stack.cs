@@ -8,9 +8,9 @@ class Stack<T> : IEnumerable<T>
 {
     Node<T>? _head;
     public int Count { get; private set; }
- 
+
     public bool IsEmpty => Count == 0;
-    
+
     public void Push(T item)
     {
         _head = new(item) { Next = _head };

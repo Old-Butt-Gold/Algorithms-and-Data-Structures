@@ -12,11 +12,11 @@ public class FindFirstAndLastPosition
     /// <returns></returns>
     public int[] SearchRange(int[] nums, int target)
     {
-        int first = FindFirst();
-        int last = FindLast(); 
+        int first = FindFirst(nums, target);
+        int last = FindLast(nums, target); 
         return [first, last];
         
-        int FindFirst()
+        static int FindFirst(int[] nums, int target)
         {
             int left = 0;
             int right = nums.Length - 1; 
@@ -24,7 +24,7 @@ public class FindFirstAndLastPosition
 
             while (left <= right)
             {
-                int mid = (left + right) / 2;
+                int mid = left + (right - left) / 2; // to avoid overflow of int
 
                 if (nums[mid] == target)
                 {
@@ -44,7 +44,7 @@ public class FindFirstAndLastPosition
             return first;
         }
         
-        int FindLast()
+        static int FindLast(int[] nums, int target)
         {
             int left = 0;
             int right = nums.Length - 1;
@@ -52,7 +52,7 @@ public class FindFirstAndLastPosition
 
             while (left <= right)
             {
-                int mid = (left + right) / 2;
+                int mid = left + (right - left) / 2; // to avoid overflow of int
 
                 if (nums[mid] == target)
                 {

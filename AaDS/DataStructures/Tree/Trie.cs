@@ -46,10 +46,7 @@ class Trie
 
     public void Add(string word)
     {
-        if (word is null)
-        {
-            throw new ArgumentNullException(nameof(word));
-        }
+        ArgumentNullException.ThrowIfNull(word);
 
         var current = _root;
         foreach (char c in word)
@@ -118,30 +115,21 @@ class Trie
     /// <exception cref="ArgumentNullException">Thrown when the input word is null.</exception>
     public bool Contains(string word)
     {
-        if (word == null)
-        {
-            throw new ArgumentNullException(nameof(word));
-        }
+        ArgumentNullException.ThrowIfNull(word);
         var node = SearchNode(word);
         return node is not null && node.IsEndOfWord;
     }
 
     public bool StartsWithPrefix(string prefix)
     {
-        if (prefix == null)
-        {
-            throw new ArgumentNullException(nameof(prefix));
-        }
+        ArgumentNullException.ThrowIfNull(prefix);
 
         return SearchNode(prefix) is not null;
     }
 
     public bool Remove(string word)
     {
-        if (word == null)
-        {
-            throw new ArgumentNullException(nameof(word));
-        }
+        ArgumentNullException.ThrowIfNull(word);
 
         var current = _root;
         var nodesStack = new Stack<TrieNode>();
@@ -175,69 +163,7 @@ class Trie
         return false;
     }
 
-    /// <summary>
-    /// Provides a list of words that have the specified prefix.
-    /// </summary>
-    /// <param name="prefix">The prefix to search for.</param>
-    /// <returns>A list of words that have the specified prefix.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when the input prefix is null.</exception>
-    public List<string> GetWordsWithPrefix(string prefix, int count)
-    {
-        if (prefix == null)
-        {
-            throw new ArgumentNullException(nameof(prefix));
-        }
-
-        if (count <= 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(count), "maxCount must be greater than 0.");
-        }
-
-        List<string> words = [];
-        var prefixNode = SearchNode(prefix);
-
-        if (prefixNode != null)
-        {
-            GetAllWordsFromNodeCount(prefixNode, new StringBuilder(prefix), words, count);
-        }
-
-        return words;
-    }
-    
-    public List<string> GetWordsWithPrefix(string prefix)
-    {
-        if (prefix == null)
-        {
-            throw new ArgumentNullException(nameof(prefix));
-        }
-
-        List<string> words = [];
-        var prefixNode = SearchNode(prefix);
-
-        if (prefixNode != null)
-        {
-            GetAllWordsFromNode(prefixNode, new StringBuilder(prefix), words);
-        }
-
-        return words;
-    }
-    
-    void GetAllWordsFromNode(TrieNode node, StringBuilder currentWord, List<string> wordValuePairs)
-    {
-        if (node.IsEndOfWord)
-        {
-            wordValuePairs.Add(currentWord.ToString());
-        }
-
-        foreach (var kvp in node.Children)
-        {
-            currentWord.Append(kvp.Key);
-            GetAllWordsFromNode(kvp.Value, currentWord, wordValuePairs);
-            currentWord.Length--;
-        }
-    }
-    
-    void GetAllWordsFromNodeCount(TrieNode node, StringBuilder currentWord, List<string> wordValuePairs, int count)
+    void GetAllWordsFromNode(TrieNode node, StringBuilder currentWord, List<string> wordValuePairs, int count)
     {
         if (wordValuePairs.Count >= count) return;
         
@@ -249,17 +175,41 @@ class Trie
         foreach (var kvp in node.Children)
         {
             currentWord.Append(kvp.Key);
-            GetAllWordsFromNodeCount(kvp.Value, currentWord, wordValuePairs, count);
+            GetAllWordsFromNode(kvp.Value, currentWord, wordValuePairs, count);
             currentWord.Length--;
         }
     }
-
-    public List<string> GetWordsWithValues()
+    
+    /// <summary>
+    /// Provides a list of words that have the specified prefix.
+    /// </summary>
+    /// <param name="prefix">The prefix to search for.</param>
+    /// <param name="count">Count of words to return from trie</param>
+    /// <returns>A list of words that have the specified prefix.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when the input prefix is null.</exception>
+    public List<string> GetWordsWithPrefix(string prefix, int count)
     {
-        List<string> wordValuePairs = [];
-        GetAllWordsFromNode(_root, new StringBuilder(), wordValuePairs);
-        return wordValuePairs;
+        ArgumentNullException.ThrowIfNull(prefix);
+
+        if (count <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(count), "maxCount must be greater than 0.");
+        }
+
+        List<string> words = [];
+        var prefixNode = SearchNode(prefix);
+
+        if (prefixNode != null)
+        {
+            GetAllWordsFromNode(prefixNode, new (prefix), words, count);
+        }
+
+        return words;
     }
+
+    public List<string> GetWordsWithPrefix(string prefix) => GetWordsWithPrefix(prefix, Count);
+
+    public List<string> GetWordsWithValues() => GetWordsWithValues(Count);
     
     public List<string> GetWordsWithValues(int count)
     {
@@ -269,7 +219,7 @@ class Trie
         }
         
         List<string> wordValuePairs = [];
-        GetAllWordsFromNodeCount(_root, new StringBuilder(), wordValuePairs, count);
+        GetAllWordsFromNode(_root, new (), wordValuePairs, count);
         return wordValuePairs;
     }
     
@@ -279,31 +229,20 @@ class Trie
     /// <param name="pattern">The pattern to search for.</param>
     /// <returns>True if there is any string in the data structure that matches the pattern, false otherwise.</returns>
     /// <exception cref="ArgumentNullException">Thrown when the input pattern is null.</exception>
-    public bool Search(string pattern)
+    public bool ContainsPattern(string pattern)
     {
-        if (pattern == null)
-        {
-            throw new ArgumentNullException(nameof(pattern));
-        }
+        ArgumentNullException.ThrowIfNull(pattern);
 
         return SearchWord(_root, 0);
         
         bool SearchWord(TrieNode node, int index)
         {
-            if (index == pattern.Length)
-            {
-                return node.IsEndOfWord;
-            }
+            if (index == pattern.Length) return node.IsEndOfWord;
 
             char c = pattern[index];
-            if (c == '.')
-            {
-                return node.Children.Values.Any(child => SearchWord(child, index + 1));
-            }
-            else
-            {
-                return node.Children.TryGetValue(c, out var nextNode) && SearchWord(nextNode, index + 1);
-            }
+            return c == '.'
+                ? node.Children.Values.Any(child => SearchWord(child, index + 1))
+                : node.Children.TryGetValue(c, out var nextNode) && SearchWord(nextNode, index + 1);
         }
     }
     
@@ -316,87 +255,18 @@ class Trie
     /// <exception cref="ArgumentNullException">Thrown when the input pattern is null.</exception>
     public bool StartsWithPrefixPattern(string pattern)
     {
-        if (pattern == null)
-        {
-            throw new ArgumentNullException(nameof(pattern));
-        }
+        ArgumentNullException.ThrowIfNull(pattern);
 
         return SearchPattern(_root, 0);
 
         bool SearchPattern(TrieNode node, int index)
         {
-            if (index == pattern.Length)
-            {
-                return true;
-            }
+            if (index == pattern.Length) return true;
 
             char c = pattern[index];
-            if (c == '.')
-            {
-                return node.Children.Values.Any(child => SearchPattern(child, index + 1));
-            }
-            else
-            {
-                return node.Children.TryGetValue(c, out var nextNode) && SearchPattern(nextNode, index + 1);
-            }
-        }
-    }
-
-    /// <summary>
-    /// Retrieves all words in the trie that start with the given pattern,
-    /// where '.' can match any letter.
-    /// </summary>
-    /// <param name="pattern">The pattern to search for.</param>
-    /// <returns>A list of words that match the pattern.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when the input pattern is null.</exception>
-    public List<string> GetWordsStartsWithPrefixPattern(string pattern)
-    {
-        if (pattern == null)
-        {
-            throw new ArgumentNullException(nameof(pattern));
-        }
-
-        List<string> result = [];
-        GetWordsWithPattern(_root, new StringBuilder(), 0);
-        return result;
-
-        void GetWordsWithPattern(TrieNode node, StringBuilder currentWord, int index)
-        {
-            if (index == pattern.Length)
-            {
-                if (node.IsEndOfWord)
-                {
-                    result.Add(currentWord.ToString());
-                }
-
-                foreach (var kvp in node.Children)
-                {
-                    currentWord.Append(kvp.Key);
-                    GetWordsWithPattern(kvp.Value, currentWord, index);
-                    currentWord.Length--;
-                }
-                return;
-            }
-
-            char c = pattern[index];
-            if (c == '.')
-            {
-                foreach (var kvp in node.Children)
-                {
-                    currentWord.Append(kvp.Key);
-                    GetWordsWithPattern(kvp.Value, currentWord, index + 1);
-                    currentWord.Length--;
-                }
-            }
-            else
-            {
-                if (node.Children.TryGetValue(c, out var nextNode))
-                {
-                    currentWord.Append(c);
-                    GetWordsWithPattern(nextNode, currentWord, index + 1);
-                    currentWord.Length--;
-                }
-            }
+            return c == '.'
+                ? node.Children.Values.Any(child => SearchPattern(child, index + 1))
+                : node.Children.TryGetValue(c, out var nextNode) && SearchPattern(nextNode, index + 1);
         }
     }
 }

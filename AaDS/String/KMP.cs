@@ -2,54 +2,75 @@
 
 static class KMP
 {
-    /// <summary>
-    ///     Returns the start index of the first appearance
-    ///     of the pattern in the input string.
-    ///     Returns -1 if no match.
-    /// </summary>
-    public static int KMPSearch(string haystack, string needle)
+    public static int KMPSearch(string haystack, string needle, int[] lps)
     {
         if (string.IsNullOrEmpty(needle)) 
-            return 0; // если needle пуст, вернуть 0
+            return 0; 
         
-        var lps = BuildLPS(needle);
-        
-        // Основной алгоритм
-        int n = 0; // индекс для needle
-        for (int h = 0; h < haystack.Length; h++)
+        int needleIndex = 0; // Указатель на текущий символ в needle
+        for (int haystackIndex = 0; haystackIndex < haystack.Length; haystackIndex++)
         {
-            while (n > 0 && needle[n] != haystack[h])
+            // Если текущие символы не совпадают
+            while (needleIndex > 0 && needle[needleIndex] != haystack[haystackIndex])
             {
-                n = lps[n - 1];
+                needleIndex = lps[needleIndex - 1]; // Используем LPS для отката
             }
-            if (needle[n] == haystack[h])
+
+            // Если символы совпадают, продвигаемся дальше
+            if (needle[needleIndex] == haystack[haystackIndex])
             {
-                n++;
+                needleIndex++;
             }
-            if (n == needle.Length)
+
+            // Если дошли до конца needle, значит, найдено совпадение
+            if (needleIndex == needle.Length)
             {
-                return h - n + 1;
+                return haystackIndex - needleIndex + 1; // Индекс начала совпадения
             }
         }
 
         return -1;
     }
+    
+    /// <summary>
+    ///     Returns the start index of the first appearance
+    ///     of the pattern `needle` in the input string `haystack`.
+    ///     Returns -1 if no match.
+    /// </summary>
+    public static int KMPSearch(string haystack, string needle)
+    {
+        if (string.IsNullOrEmpty(needle)) 
+            return 0; 
+        
+        var lps = BuildLPS(needle);
 
+        return KMPSearch(haystack, needle, lps);
+    }
+
+    /// <summary>
+    /// builds array LPS (Longest Prefix Suffix) for `pattern` string
+    /// </summary>
+    /// <param name="pattern"></param>
+    /// <returns></returns>
     public static int[] BuildLPS(string pattern)
     {
-        // Препроцессинг
         int[] lps = new int[pattern.Length];
-        int pre = 0;
+        int length = 0; // Длина текущего совпадающего префикса-суффикса
+
+        // Проходим по pattern, начиная со второго символа
         for (int i = 1; i < pattern.Length; i++)
         {
-            while (pre > 0 && pattern[i] != pattern[pre])
+            // Если символы не совпадают, пытаемся сократить длину совпадения
+            while (length > 0 && pattern[i] != pattern[length])
             {
-                pre = lps[pre - 1];
+                length = lps[length - 1];
             }
-            if (pattern[pre] == pattern[i])
+
+            // Если символы совпадают, увеличиваем длину совпадения
+            if (pattern[i] == pattern[length])
             {
-                pre++;
-                lps[i] = pre;
+                length++;
+                lps[i] = length;
             }
         }
 

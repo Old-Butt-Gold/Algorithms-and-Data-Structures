@@ -3,6 +3,29 @@
 public partial class BestTimeToBuyAndSellStock
 {
     /// <summary>
+    /// leetcode.com/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/description/?envType=study-plan-v2
+    /// </summary>
+    /// <param name="prices"></param>
+    /// <param name="fee"></param>
+    /// <returns></returns>
+    public static int MaxProfitWithTransactionFeeGreedy(int[] prices, int fee) 
+    {
+        int maxProfit = 0;
+        int minPrice = prices[0];
+
+        foreach (var price in prices) {
+            if (price < minPrice)
+                minPrice = price;  // Ищем минимальную цену для покупки.
+            else if (price - minPrice > fee) {
+                maxProfit += price - minPrice - fee;  // Продаем акцию, если прибыль превышает комиссию.
+                minPrice = price - fee;  // Обновляем минимальную цену для следующей покупки.
+            }
+        }
+
+        return maxProfit;
+    }
+    
+    /// <summary>
     /// You are given an array prices where prices[i] is the price of a given stock on the ith day.
     /// You want to maximize your profit by choosing a single day to buy one stock and choosing a different day in the future to sell that stock.
     /// Return the maximum profit you can achieve from this transaction. If you cannot achieve any profit, return 0.

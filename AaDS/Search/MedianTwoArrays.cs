@@ -23,12 +23,12 @@ public class MedianTwoArrays
             return FindMedianSortedArrays(nums2, nums1);
         }
 
-        int low = 0;
-        int high = len2 * 2;
+        int left = 0;
+        int right = len2 * 2;
 
-        while (low <= high)
+        while (left <= right)
         {
-            int mid2 = (low + high) / 2;
+            int mid2 = left + (right - left) / 2;
             int mid1 = len1 + len2 - mid2;
 
             double L1 = (mid1 == 0) ? int.MinValue : nums1[(mid1 - 1) / 2];
@@ -39,12 +39,12 @@ public class MedianTwoArrays
             // Если левый элемент первого массива больше правого элемента второго
             if (L1 > R2)
             {
-                low = mid2 + 1;
+                left = mid2 + 1;
             }
             // Если левый элемент второго массива больше правого элемента первого
             else if (L2 > R1)
             {
-                high = mid2 - 1;
+                right = mid2 - 1;
             }
             // Если найдено правильное разбиение
             else

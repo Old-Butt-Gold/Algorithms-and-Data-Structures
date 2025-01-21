@@ -19,7 +19,6 @@ public partial class BestTimeToBuyAndSellStock
         var min = new int[countStocks + 1];
         Array.Fill(min, prices[0]);
         
-        
         for (int i = 1; i < prices.Length; i++)
         {
             for (int k = 1; k <= countStocks; k++)
@@ -30,6 +29,25 @@ public partial class BestTimeToBuyAndSellStock
         }
 
         return dp[countStocks];
+    }
+    
+    /// <summary>
+    /// leetcode.com/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/description/?envType=study-plan-v2
+    /// </summary>
+    /// <param name="prices"></param>
+    /// <param name="fee"></param>
+    /// <returns></returns>
+    public static int MaxProfitWithTransactionFeeDp(int[] prices, int fee) 
+    {
+        int holding = -prices[0];  // Максимальная прибыль, если держим акцию.
+        int notHolding = 0;        // Максимальная прибыль, если не держим акцию.
+
+        for (int day = 1; day < prices.Length; day++) {
+            holding = Math.Max(holding, notHolding - prices[day]);  // Решаем, покупать ли акцию сегодня.
+            notHolding = Math.Max(notHolding, holding + prices[day] - fee);  // Решаем, продавать ли акцию сегодня с учетом комиссии.
+        }
+
+        return Math.Max(holding, notHolding);  // Мы можем быть либо в позиции "держим акцию", либо "не держим акцию".
     }
 
     /// <summary>
@@ -47,7 +65,6 @@ public partial class BestTimeToBuyAndSellStock
         var dp = new int[k + 1];
         var min = new int[k + 1];
         Array.Fill(min, prices[0]);
-
 
         for (int i = 1; i < prices.Length; i++)
         {

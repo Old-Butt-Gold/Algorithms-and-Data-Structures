@@ -2,47 +2,85 @@
 
 class FenwickTree
 {
-    int[] BIT;
+    readonly int[] _tree;
     public int Count { get; }
 
-    public FenwickTree(IEnumerable<int> values)
+    public FenwickTree(IList<int> values) : this(values.Count)
     {
-        Count = values.Count();
-        BIT = new int[Count + 1];
         int index = 0;
 
         foreach (var value in values)
-            Update(index++, value);
+            Add(index++, value);
     }
 
-    public void UpdateAbsolute(int index, int newValue)
+    public FenwickTree(int count)
     {
-        Update(index, newValue - RangeQuery(index, index));
+        Count = count;
+        _tree = new int[Count + 1];
+    }
+
+    public void Update(int index, int newValue)
+    {
+        int currentValue = SumRange(index, index);
+        int delta = newValue - currentValue;
+        Add(index, delta);
     }
     
-    public void Update(int index, int delta)
+    public void Add(int index, int delta)
     {
         index++;
-        while (index <= Count)
+        while (index < _tree.Length)
         {
-            BIT[index] += delta;
+            _tree[index] += delta;
             index += index & -index;
         }
     }
+    
+    public int FindIndexByPrefixSum(int targetSum)
+    {
+        if (Sum(Count - 1) < targetSum)
+            throw new ArgumentOutOfRangeException(nameof(targetSum), "Target sum is greater than the total sum of all elements.");
 
-    //Сумма от 0 до index
-    public int Query(int index)
+        int index = 0;
+        int currentSum = 0;
+        int mask = HighestPowerOfTwo(Count);
+
+        while (mask > 0)
+        {
+            int nextIndex = index + mask;
+            if (nextIndex <= Count && currentSum + _tree[nextIndex] < targetSum)
+            {
+                index = nextIndex;
+                currentSum += _tree[nextIndex];
+            }
+            mask >>= 1;
+        }
+        
+        return index;
+        
+        int HighestPowerOfTwo(int x)
+        {
+            int power = 1;
+            while (power <= x)
+                power <<= 1;
+            return power >> 1;
+        }
+    }
+    
+    public void Remove(int index) => Update(index, 0);
+
+    public int Sum(int index)
     {
         index++;
         int sum = 0;
         while (index > 0)
         {
-            sum += BIT[index];
+            sum += _tree[index];
             index -= index & -index;
         }
         return sum;
     }
 
-    public int RangeQuery(int left, int right) 
-        => Query(right) - Query(left - 1);
+    public int SumRange(int left, int right) 
+        => Sum(right) - Sum(left - 1);
 }
