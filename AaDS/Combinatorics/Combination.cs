@@ -6,14 +6,14 @@
 static class Combination
 {
     //
-    public static List<List<T>> Generate<T>(List<T> elements, int length, bool allowRepetition = false)
+    public static List<List<T>> Generate<T>(IList<T> elements, int length, bool allowRepetition = false)
     {
         var result = new List<List<T>>();
         Recurse(elements, length, allowRepetition, 0, [], [], result);
         return result;
     }
 
-    static void Recurse<T>(List<T> elements, int length, bool allowRepetition, int currentIndex, List<T> currentCombination, HashSet<int> usedIndices, List<List<T>> result)
+    static void Recurse<T>(IList<T> elements, int length, bool allowRepetition, int currentIndex, List<T> currentCombination, HashSet<int> usedIndices, List<List<T>> result)
     {
         if (currentCombination.Count == length)
         {
